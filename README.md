@@ -6,9 +6,11 @@ This repository contains scripts and tools to repair issues in the database of t
 The underlying database file contains all information about feeds, episodes and media.
 It can be exported in the app and afterwards be reimported.
 
-**Disclaimer**: I give absolutely no warranty for problems arising from the usage of these scripts 
+**Disclaimer**: Absolutely no warranty can be given for problems arising from the usage of these scripts 
 like accidental data loss or database corruption. 
-Only use the scripts if you know what you're doing. 
+Use the scripts if and only if you know what you're doing.
+
+Please also read the docstring at the op of each script!
 
 ## Use cases
 1. Consolidation of duplicate entries:

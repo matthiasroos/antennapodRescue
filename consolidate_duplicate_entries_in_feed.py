@@ -8,6 +8,9 @@ It relies on a list of assumptions:
  * unchanged publication date of the items ('pubDate' in FeedItems)
  * unchanged file size of the media ('filesize' in FeedMedia)
 to identify duplicate episodes.
+The validity of these assumptions will vary very strongly by the specific podcast feed.
+Furthermore, it is assumed that the same items are identified as duplicate in FeedItems and FeedMedia,
+as they are identified independent from each other.
 
 Every field of the "new" episodes containing a https URL is written to the "old" episodes.
 The "new" episodes are deleted.

@@ -23,3 +23,42 @@ def download_xml(url: str) -> typing.Optional[bytes]:
         return None
 
     return response.content
+
+
+def get_feeds_from_db(sqlite_filename: str) -> typing.List[Feed]:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+    with sqlmodel.Session(engine) as session:
+        statement = sqlmodel.select(Feed)
+        feeds = session.exec(statement).all()
+    return feeds
+
+
+def get_feed_from_db(sqlite_filename: str, feed_id: int) -> Feed:
+    """
+
+    :param sqlite_filename:
+    :param feed_id:
+    :return:
+    """
+    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+    with sqlmodel.Session(engine) as session:
+        statement = sqlmodel.select(Feed).where(Feed.id == feed_id)
+        feed = session.exec(statement).one()
+    return feed
+
+
+def get_xml_for_feed(sqlite_filename: str, feed_id: int) -> bytes:
+    """
+
+    :param sqlite_filename:
+    :param feed_id:
+    :return:
+    """
+    feed = get_feed_from_db(sqlite_filename=sqlite_filename, feed_id=feed_id)
+    xml = download_xml(url=feed.download_url)
+    return xml

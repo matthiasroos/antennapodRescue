@@ -1,30 +1,15 @@
 import collections
 import datetime
-import xml.etree.ElementTree as ET
-
 import typing
+import xml.etree.ElementTree as ET
 
 import pandas as pd
 import sqlmodel
 
-
-class FeedItem(sqlmodel.SQLModel, table=True):
-    """
-    Table FeedItems
-    """
-    __tablename__ = 'FeedItems'
-    id: typing.Optional[int] = sqlmodel.Field(default=None, primary_key=True)
-    title: str
-    pubDate: int
-    read: int
-    link: str
-    description: str
-    feed: int
-    item_identifier: str
-    image_url: str
+import models
 
 
-def parse_xml_for_feeditems(xml: bytes) -> typing.List[FeedItem]:
+def parse_xml_for_feeditems(xml: bytes) -> typing.List[models.FeedItem]:
     """
     Parse a XML as bytes to obtain all included .
 
@@ -34,13 +19,13 @@ def parse_xml_for_feeditems(xml: bytes) -> typing.List[FeedItem]:
     root = ET.fromstring(xml)
     episode_list = []
     for ep in root.iter(tag='item'):
-        item = FeedItem(title=ep.find('title').text,
-                        pubDate=ep.find('pubDate').text,
-                        read=0,
-                        link=ep.find('link').text,
-                        description=ep.find('description'),
-                        item_identifier=ep.find('guid').text
-                        )
+        item = models.FeedItem(title=ep.find('title').text,
+                               pubDate=ep.find('pubDate').text,
+                               read=0,
+                               link=ep.find('link').text,
+                               description=ep.find('description'),
+                               item_identifier=ep.find('guid').text
+                               )
         episode_list.append(item)
     return episode_list
 
@@ -63,7 +48,7 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
                         columns=['title', 'pubDate', 'read', 'link', 'description', 'item_identifier'])
 
 
-def get_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[FeedItem]:
+def get_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[models.FeedItem]:
     """
 
     :param sqlite_filename:
@@ -72,7 +57,7 @@ def get_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[Fee
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
     with sqlmodel.Session(engine) as session:
-        statement = sqlmodel.select(FeedItem).where(FeedItem.feed == feed_id)
+        statement = sqlmodel.select(models.FeedItem).where(models.FeedItem.feed == feed_id)
         episodes = session.exec(statement).all()
     return episodes
 
@@ -86,7 +71,7 @@ def get_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
     con = engine.connect()
-    statement = sqlmodel.select(FeedItem).where(FeedItem.feed == feed_id)
+    statement = sqlmodel.select(models.FeedItem).where(models.FeedItem.feed == feed_id)
     episodes_df = pd.read_sql(
         sql=statement,
         con=con,

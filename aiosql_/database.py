@@ -5,7 +5,7 @@ import typing
 import aiosql
 import pandas as pd
 
-queries = aiosql.from_path('antennapod.sql', 'sqlite3')
+queries = aiosql.from_path('aiosql_/antennapod.sql', 'sqlite3')
 
 
 def get_connection(file_name: str) -> sqlite3.Connection:

@@ -29,14 +29,11 @@ def get_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     :param feed_id:
     :return:
     """
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
-    con = engine.connect()
     statement = sqlmodel.select(sqlmodel_.models.FeedMedia) \
         .filter(sqlmodel_.models.FeedMedia.feeditem == sqlmodel_.models.FeedItem.id)\
         .where(sqlmodel_.models.FeedItem.feed == feed_id)
-    media_df = pd.read_sql(
-        sql=statement,
-        con=con,
-        columns=['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem'])
-    con.close()
+    columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
+    media_df = sqlmodel_.database.fetch_all_df(sqlite_filename=sqlite_filename,
+                                               statement=statement,
+                                               columns=columns)
     return media_df

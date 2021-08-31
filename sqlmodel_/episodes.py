@@ -68,12 +68,10 @@ def get_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     :param feed_id:
     :return:
     """
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
-    con = engine.connect()
     statement = sqlmodel.select(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.feed == feed_id)
-    episodes_df = pd.read_sql(
-        sql=statement,
-        con=con,
-        columns=['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url'])
-    con.close()
+    columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
+
+    episodes_df = sqlmodel_.database.fetch_all_df(sqlite_filename=sqlite_filename,
+                                                  statement=statement,
+                                                  columns=columns)
     return episodes_df

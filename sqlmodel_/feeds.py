@@ -3,7 +3,7 @@ import typing
 import requests
 import sqlmodel
 
-import models
+import sqlmodel_.models
 
 
 def download_xml(url: str) -> typing.Optional[bytes]:
@@ -15,7 +15,7 @@ def download_xml(url: str) -> typing.Optional[bytes]:
     return response.content
 
 
-def get_feeds_from_db(sqlite_filename: str) -> typing.List[models.Feed]:
+def get_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Feed]:
     """
 
     :param sqlite_filename:
@@ -23,12 +23,12 @@ def get_feeds_from_db(sqlite_filename: str) -> typing.List[models.Feed]:
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
     with sqlmodel.Session(engine) as session:
-        statement = sqlmodel.select(models.Feed)
+        statement = sqlmodel.select(sqlmodel_.models.Feed)
         feeds = session.exec(statement).all()
     return feeds
 
 
-def get_feed_from_db(sqlite_filename: str, feed_id: int) -> models.Feed:
+def get_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.models.Feed:
     """
 
     :param sqlite_filename:
@@ -37,7 +37,7 @@ def get_feed_from_db(sqlite_filename: str, feed_id: int) -> models.Feed:
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
     with sqlmodel.Session(engine) as session:
-        statement = sqlmodel.select(models.Feed).where(models.Feed.id == feed_id)
+        statement = sqlmodel.select(sqlmodel_.models.Feed).where(sqlmodel_.models.Feed.id == feed_id)
         feed = session.exec(statement).one()
     return feed
 

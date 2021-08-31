@@ -3,6 +3,7 @@ import typing
 import requests
 import sqlmodel
 
+import sqlmodel_.database
 import sqlmodel_.models
 
 
@@ -21,10 +22,9 @@ def get_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Feed
     :param sqlite_filename:
     :return:
     """
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
-    with sqlmodel.Session(engine) as session:
-        statement = sqlmodel.select(sqlmodel_.models.Feed)
-        feeds = session.exec(statement).all()
+    statement = sqlmodel.select(sqlmodel_.models.Feed)
+    feeds = sqlmodel_.database.fetch_all(sqlite_filename=sqlite_filename,
+                                         statement=statement)
     return feeds
 
 

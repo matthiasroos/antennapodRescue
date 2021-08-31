@@ -3,6 +3,7 @@ import typing
 import pandas as pd
 import sqlmodel
 
+import sqlmodel_.database
 import sqlmodel_.models
 
 
@@ -13,12 +14,11 @@ def get_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmode
     :param feed_id:
     :return:
     """
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
-    with sqlmodel.Session(engine) as session:
-        statement = sqlmodel.select(sqlmodel_.models.FeedMedia)\
-            .filter(sqlmodel_.models.FeedMedia.feeditem == sqlmodel_.models.FeedItem.id)\
-            .where(sqlmodel_.models.FeedItem.feed == feed_id)
-        media = session.exec(statement).all()
+    statement = sqlmodel.select(sqlmodel_.models.FeedMedia) \
+        .filter(sqlmodel_.models.FeedMedia.feeditem == sqlmodel_.models.FeedItem.id) \
+        .where(sqlmodel_.models.FeedItem.feed == feed_id)
+    media = sqlmodel_.database.fetch_all(sqlite_filename=sqlite_filename,
+                                         statement=statement)
     return media
 
 

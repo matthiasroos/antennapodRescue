@@ -40,7 +40,13 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
     root = ET.fromstring(xml)
     episode_list = []
     for ep in root.iter(tag='item'):
-        datetime_entry = datetime.datetime.strptime(ep.find('pubDate').text, datetime_format).timestamp() * 1000
+        try:
+            datetime_format_1 = '%a, %d %b %Y %H:%M:%S %z'
+            datetime_entry = datetime.datetime.strptime(ep.find('pubDate').text, datetime_format_1).timestamp() * 1000
+        except ValueError:
+            datetime_format_2 = '%a, %d %b %Y %H:%M:%S %Z'
+            datetime_entry = datetime.datetime.strptime(ep.find('pubDate').text, datetime_format_2).timestamp() * 1000
+
         item = [ep.find('title').text, int(datetime_entry), 0, ep.find('link').text, ep.find('description'),
                 ep.find('guid').text]
         episode_list.append(item)

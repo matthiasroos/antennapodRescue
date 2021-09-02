@@ -81,3 +81,19 @@ def get_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
                                                   statement=statement,
                                                   columns=columns)
     return episodes_df
+
+
+def delete_feeditems_from_db(sqlite_filename: str, feed_item_ids: typing.List[int]) -> None:
+    """
+
+    :param sqlite_filename:
+    :param feed_item_ids:
+    :return:
+    """
+
+    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+    with sqlmodel.Session(engine) as session:
+        for feed_item_id in feed_item_ids:
+            statement = sqlmodel.delete(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.id == feed_item_id)
+            session.exec(statement)
+        session.commit()

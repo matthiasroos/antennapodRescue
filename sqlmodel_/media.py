@@ -37,3 +37,19 @@ def get_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
                                                statement=statement,
                                                columns=columns)
     return media_df
+
+
+def delete_media_from_db(sqlite_filename: str, media_ids: typing.List[int]) -> None:
+    """
+
+    :param sqlite_filename:
+    :param media_ids:
+    :return:
+    """
+
+    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+    with sqlmodel.Session(engine) as session:
+        for media_id in media_ids:
+            statement = sqlmodel.delete(sqlmodel_.models.FeedMedia).where(sqlmodel_.models.FeedMedia.id == media_id)
+            session.exec(statement)
+        session.commit()

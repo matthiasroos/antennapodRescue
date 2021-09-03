@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import sqlmodel
 
-import sqlmodel_.database
 import sqlmodel_.models
 
 
@@ -52,48 +51,3 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
         episode_list.append(item)
     return pd.DataFrame(episode_list,
                         columns=['title', 'pubDate', 'read', 'link', 'description', 'item_identifier'])
-
-
-def get_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmodel_.models.FeedItem]:
-    """
-
-    :param sqlite_filename:
-    :param feed_id:
-    :return:
-    """
-    statement = sqlmodel.select(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.feed == feed_id)
-    episodes = sqlmodel_.database.fetch_all(sqlite_filename=sqlite_filename,
-                                            statement=statement)
-    return episodes
-
-
-def get_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
-    """
-
-    :param sqlite_filename:
-    :param feed_id:
-    :return:
-    """
-    statement = sqlmodel.select(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.feed == feed_id)
-    columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
-
-    episodes_df = sqlmodel_.database.fetch_all_df(sqlite_filename=sqlite_filename,
-                                                  statement=statement,
-                                                  columns=columns)
-    return episodes_df
-
-
-def delete_feeditems_from_db(sqlite_filename: str, feed_item_ids: typing.List[int]) -> None:
-    """
-
-    :param sqlite_filename:
-    :param feed_item_ids:
-    :return:
-    """
-
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
-    with sqlmodel.Session(engine) as session:
-        for feed_item_id in feed_item_ids:
-            statement = sqlmodel.delete(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.id == feed_item_id)
-            session.exec(statement)
-        session.commit()

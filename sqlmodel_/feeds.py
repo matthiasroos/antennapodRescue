@@ -23,6 +23,6 @@ def get_xml_for_feed(sqlite_filename: str, feed_id: int) -> bytes:
     :param feed_id:
     :return:
     """
-    feed = sqlmodel_.database.fetch.fetch_feed_from_db(sqlite_filename=sqlite_filename, feed_id=feed_id)
+    feed = sqlmodel_.database.fetch.fetch_single_feed_from_db(sqlite_filename=sqlite_filename, feed_id=feed_id)
     xml = download_xml(url=feed.download_url)
     return xml

@@ -3,9 +3,24 @@ import typing
 import xml.etree.ElementTree as ET
 
 import pandas as pd
-import sqlmodel
+import requests
 
+import sqlmodel_.database.fetch
 import sqlmodel_.models
+
+
+def download_xml(url: str) -> typing.Optional[bytes]:
+    """
+
+    :param url:
+    :return:
+    """
+    response = requests.get(url=url)
+    if response.status_code != 200:
+        print(f'Error while loading xml from {url}: {response.status_code}')
+        return None
+
+    return response.content
 
 
 def parse_xml_for_feeditems(xml: bytes) -> typing.List[sqlmodel_.models.FeedItem]:
@@ -35,7 +50,6 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
     :param xml:
     :return:
     """
-    datetime_format = '%a, %d %b %Y %H:%M:%S %z'
     root = ET.fromstring(xml)
     episode_list = []
     for ep in root.iter(tag='item'):
@@ -51,3 +65,15 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
         episode_list.append(item)
     return pd.DataFrame(episode_list,
                         columns=['title', 'pubDate', 'read', 'link', 'description', 'item_identifier'])
+
+
+def get_xml_for_feed(sqlite_filename: str, feed_id: int) -> bytes:
+    """
+
+    :param sqlite_filename:
+    :param feed_id:
+    :return:
+    """
+    feed = sqlmodel_.database.fetch.fetch_single_feed_from_db(sqlite_filename=sqlite_filename, feed_id=feed_id)
+    xml = download_xml(url=feed.download_url)
+    return xml

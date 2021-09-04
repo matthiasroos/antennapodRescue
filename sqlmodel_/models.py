@@ -42,4 +42,7 @@ class FeedMedia(sqlmodel.SQLModel, table=True):
     download_url: str
     downloaded: int
     filesize: int
+    playback_completion_date: int
     feeditem: int = sqlmodel.Field(default=None, foreign_key="FeedItems.id")
+    played_duration: int
+    last_played_time: int

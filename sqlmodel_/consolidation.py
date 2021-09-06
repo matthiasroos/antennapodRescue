@@ -32,7 +32,7 @@ def find_duplicate_episodes_and_merge_with_xml(episodes_db_df: pd.DataFrame,
 def find_episodes_no_longer_in_xml(episodes_db_df: pd.DataFrame,
                                    episodes_xml_df: pd.DataFrame,
                                    keep_old: bool = True,
-                                   keep_played_episodes: bool = True) -> pd.DataFrame:
+                                   keep_played_episodes: bool = True) -> typing.Tuple[pd.DataFrame, pd.DataFrame]:
     """
 
     :param episodes_db_df:
@@ -64,7 +64,7 @@ def find_episodes_no_longer_in_xml(episodes_db_df: pd.DataFrame,
             (episodes_merged_filtered_df['read_x'] != 1)
         ]
 
-    return episodes_merged_filtered_df
+    return episodes_merged_filtered_df, episodes_merged_df
 
 
 def prepare_deletion_of_episodes_and_media(episodes_df: pd.DataFrame,

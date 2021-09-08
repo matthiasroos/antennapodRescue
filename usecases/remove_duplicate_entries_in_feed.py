@@ -37,9 +37,10 @@ import aiosql_.database
 
 def identify_duplicate_feeditems(feed_items_df: pd.DataFrame) -> pd.DataFrame:
     """
+    Identify duplicate feed items within a dataframe by looking at the columns 'title' and 'pubDate'.
 
-    :param feed_items_df:
-    :return:
+    :param feed_items_df: dataframe containing all feed items for a podcast feed
+    :return: dataframe containing only the duplicates, sorted by 'title'
     """
     duplicates = feed_items_df.duplicated(subset=['title', 'pubDate'], keep=False)
     return feed_items_df[duplicates].copy().sort_values(by='title')
@@ -47,9 +48,10 @@ def identify_duplicate_feeditems(feed_items_df: pd.DataFrame) -> pd.DataFrame:
 
 def identify_duplicate_media(media_df: pd.DataFrame) -> pd.DataFrame:
     """
+    Identify duplicate media within a dataframe by looking at the column 'filesize'.
 
-    :param media_df:
-    :return:
+    :param media_df: dataframe containing all media for a podcast feed
+    :return: dataframe containing only the duplicates, sorted by 'title'
     """
     duplicates = media_df.duplicated(subset=['filesize'], keep=False)
     return media_df[duplicates].copy().sort_values(by='filesize')
@@ -57,9 +59,18 @@ def identify_duplicate_media(media_df: pd.DataFrame) -> pd.DataFrame:
 
 def consolidate_feeditems(duplicate_items_df: pd.DataFrame) -> typing.Tuple[pd.DataFrame, typing.List[str]]:
     """
+    Consolidate duplicate feed items.
 
-    :param duplicate_items_df:
-    :return:
+    Feed items with the lower id (older) are marked for update,
+    feed items with the higher id (newer) are marked for deletion.
+
+    The columns 'link', 'description', 'item_identifier' and 'image_url' of the older feed item
+    are updated with the respective values of the newer feed item.
+
+    :param duplicate_items_df: dataframe containing all duplicate feed items
+    :return: tuple:
+        * dataframe containing the feed items to be updated,
+        * list of feed items to be deleted
     """
     unique_titles = duplicate_items_df['title'].unique()
 
@@ -86,9 +97,17 @@ def consolidate_feeditems(duplicate_items_df: pd.DataFrame) -> typing.Tuple[pd.D
 
 def consolidate_media(duplicate_media_df: pd.DataFrame) -> typing.Tuple[pd.DataFrame, typing.List[str]]:
     """
+    Consolidate duplicate media.
 
-    :param duplicate_media_df:
-    :return:
+    Media with the lower id (older) are marked for update,
+    media with the higher id (newer) are marked for deletion.
+
+    The column 'download_url' of the older media is updated with the respective value of the newer media.
+
+    :param duplicate_media_df: dataframe containing all duplicate media
+    :return: tuple:
+        * dataframe containing the media to be updated,
+        * list of media to be deleted
     """
     unique_filesizes = duplicate_media_df['filesize'].unique()
 

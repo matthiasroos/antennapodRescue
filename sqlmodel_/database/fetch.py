@@ -44,8 +44,8 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Fe
     :return:
     """
     statement = sqlmodel.select(sqlmodel_.models.Feed)
-    feeds = sqlmodel_.database.fetch.fetch_all(sqlite_filename=sqlite_filename,
-                                               statement=statement)
+    feeds = fetch_all(sqlite_filename=sqlite_filename,
+                      statement=statement)
     return feeds
 
 
@@ -71,8 +71,8 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[s
     :return:
     """
     statement = sqlmodel.select(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.feed == feed_id)
-    episodes = sqlmodel_.database.fetch.fetch_all(sqlite_filename=sqlite_filename,
-                                                  statement=statement)
+    episodes = fetch_all(sqlite_filename=sqlite_filename,
+                         statement=statement)
     return episodes
 
 
@@ -86,9 +86,9 @@ def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFram
     statement = sqlmodel.select(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.feed == feed_id)
     columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
 
-    episodes_df = sqlmodel_.database.fetch.fetch_all_df(sqlite_filename=sqlite_filename,
-                                                        statement=statement,
-                                                        columns=columns)
+    episodes_df = fetch_all_df(sqlite_filename=sqlite_filename,
+                               statement=statement,
+                               columns=columns)
     return episodes_df
 
 
@@ -102,8 +102,8 @@ def fetch_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmo
     statement = sqlmodel.select(sqlmodel_.models.FeedMedia) \
         .filter(sqlmodel_.models.FeedMedia.feeditem == sqlmodel_.models.FeedItem.id) \
         .where(sqlmodel_.models.FeedItem.feed == feed_id)
-    media = sqlmodel_.database.fetch.fetch_all(sqlite_filename=sqlite_filename,
-                                               statement=statement)
+    media = fetch_all(sqlite_filename=sqlite_filename,
+                      statement=statement)
     return media
 
 
@@ -118,7 +118,7 @@ def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
         .filter(sqlmodel_.models.FeedMedia.feeditem == sqlmodel_.models.FeedItem.id)\
         .where(sqlmodel_.models.FeedItem.feed == feed_id)
     columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
-    media_df = sqlmodel_.database.fetch.fetch_all_df(sqlite_filename=sqlite_filename,
-                                                     statement=statement,
-                                                     columns=columns)
+    media_df = fetch_all_df(sqlite_filename=sqlite_filename,
+                            statement=statement,
+                            columns=columns)
     return media_df

@@ -74,6 +74,43 @@ def find_episodes_no_longer_in_xml(episodes_db_df: pd.DataFrame,
     return no_longer_in_xml_df, episodes_merged_df
 
 
+def find_old_unusually_short_episodes(episodes_db_df: pd.DataFrame,
+                                      episodes_xml_df: pd.DataFrame,
+                                      media_df: pd.DataFrame) -> typing.Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Find old episodes (no longer included in the xml file), which have an unusually short duration
+    and are therefore highly likely episodes, where added by accident.
+    Only applicable if the episodes are produced for a certain format with a duration of e.g. one hour.
+
+    The criterion for unusually short is: duration smaller than 2 sigma from the mean of all episodes the database.
+
+    :param episodes_db_df: dataframe containing all feed episodes from the database
+    :param episodes_xml_df: dataframe containing all feed episodes currently in the xml file
+    :param media_df: dataframe containing all media for all feed episodes from the database
+    :return: dataframe containing all episodes which were deemed as too short
+             dataframe containing all episodes from db and xml merged, augmented with media information
+    """
+    episodes_merged_df = episodes_db_df.merge(episodes_xml_df,
+                                              how='left',
+                                              on='item_identifier',
+                                              suffixes=('_db', '_xml'))
+    episodes_merged_df = episodes_merged_df[
+        episodes_merged_df['pubDate_db'] <= np.nanmin(episodes_merged_df['pubDate_xml'])]
+
+    episodes_media_merged_df = episodes_merged_df.merge(media_df,
+                                                        how='left',
+                                                        left_on='id',
+                                                        right_on='feeditem',
+                                                        suffixes=('', '_media'))
+    duration_mean = episodes_media_merged_df['duration'].mean()
+    duration_std = episodes_media_merged_df['duration'].std()
+
+    two_sigma = duration_mean - 2 * duration_std
+    too_short_episodes_df = episodes_media_merged_df[episodes_media_merged_df['duration'] < two_sigma]
+
+    return too_short_episodes_df, episodes_media_merged_df
+
+
 def prepare_deletion_of_episodes_and_media(episodes_df: pd.DataFrame,
                                            media_df: pd.DataFrame) -> typing.Tuple[typing.List[int], typing.List[int]]:
     """

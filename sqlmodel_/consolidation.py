@@ -34,12 +34,19 @@ def find_episodes_no_longer_in_xml(episodes_db_df: pd.DataFrame,
                                    keep_old: bool = True,
                                    keep_played_episodes: bool = True) -> typing.Tuple[pd.DataFrame, pd.DataFrame]:
     """
+    Find episodes in the database for one feed which are not in the current xml file of the feed.
 
-    :param episodes_db_df:
-    :param episodes_xml_df:
-    :param keep_old:
-    :param keep_played_episodes:
-    :return:
+    These episodes were seemingly removed by the owner of the feed, which can fall into different categories:
+    1.) episodes, which were added accidentally, often also identifiable by uncommon duration or title
+    2.) old episodes (if only a certain amount of episodes are included in the xml file).
+
+    :param episodes_db_df: dataframe containing all feed episodes from the database
+    :param episodes_xml_df: dataframe containing all feed episodes currently in the xml file
+    :param keep_old: boolean flag if old episodes should be kept or not
+    :param keep_played_episodes: boolean flag if played episodes should be kept or not
+        (beware: influences statistics if not kept)
+    :return: dataframe with all episodes no longer in the xml file,
+             dataframe with all episodes from db and xml merged
     """
     episodes_merged_df = episodes_db_df.merge(episodes_xml_df, how='outer', on='item_identifier')
     episodes_merged_df.sort_values(by=['pubDate_x'], inplace=True)
@@ -54,17 +61,17 @@ def find_episodes_no_longer_in_xml(episodes_db_df: pd.DataFrame,
         ~(episodes_merged_df['pubDate_y'] >= np.nanmax(episodes_merged_df['pubDate_x']))]
 
     # filter entries in both
-    episodes_merged_filtered_df = episodes_merged_df[
+    no_longer_in_xml_df = episodes_merged_df[
         (episodes_merged_df['title_x'] != episodes_merged_df['title_y']) &
         (episodes_merged_df['pubDate_x'] != episodes_merged_df['pubDate_y'])]
 
     #
     if keep_played_episodes:
-        episodes_merged_filtered_df = episodes_merged_filtered_df[
-            (episodes_merged_filtered_df['read_x'] != 1)
+        no_longer_in_xml_df = no_longer_in_xml_df[
+            (no_longer_in_xml_df['read_x'] != 1)
         ]
 
-    return episodes_merged_filtered_df, episodes_merged_df
+    return no_longer_in_xml_df, episodes_merged_df
 
 
 def prepare_deletion_of_episodes_and_media(episodes_df: pd.DataFrame,

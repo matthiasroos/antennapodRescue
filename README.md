@@ -17,5 +17,13 @@ Please also read the docstring at the op of each script!
 
     Remove duplicate entries introduced by upstream changes of some values in the feed XML.
     Other values like title must still be identical to allow automatic merging.
+2. Removal of episodes which are no longer in the XML file:
+
+   Remove episodes, which are no longer distributed in the currently available XML file.
+3. Removal of old unusually short episodes:
+
+    Remove episodes which are no longer distributed in the XML file and have a duration significantly shorter than usual.
+
+    
 
 

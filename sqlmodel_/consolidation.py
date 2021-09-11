@@ -48,6 +48,8 @@ def find_episodes_no_longer_in_xml(episodes_db_df: pd.DataFrame,
     :return: dataframe with all episodes no longer in the xml file,
              dataframe with all episodes from db and xml merged
     """
+    if episodes_db_df.empty or episodes_xml_df.empty:
+        return pd.DataFrame(), pd.DataFrame()
     episodes_merged_df = episodes_db_df.merge(episodes_xml_df, how='outer', on='item_identifier')
     episodes_merged_df.sort_values(by=['pubDate_x'], inplace=True)
 
@@ -90,6 +92,8 @@ def find_old_unusually_short_episodes(episodes_db_df: pd.DataFrame,
     :return: dataframe containing all episodes which were deemed as too short
              dataframe containing all episodes from db and xml merged, augmented with media information
     """
+    if episodes_db_df.empty or episodes_xml_df.empty:
+        return pd.DataFrame(), pd.DataFrame()
     episodes_merged_df = episodes_db_df.merge(episodes_xml_df,
                                               how='left',
                                               on='item_identifier',
@@ -125,6 +129,8 @@ def prepare_deletion_of_episodes_and_media(episodes_df: pd.DataFrame,
     :return: list of feeditem ids to be deleted,
              list of corresponding media ids to be deleted
     """
+    if episodes_df.empty or media_df.empty:
+        return [], []
     episodes_to_delete = episodes_df['id'].tolist()
     episodes_to_delete = [int(epi) for epi in episodes_to_delete]
 

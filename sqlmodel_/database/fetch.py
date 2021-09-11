@@ -49,6 +49,19 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Fe
     return feeds
 
 
+def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    statement = sqlmodel.select(sqlmodel_.models.Feed)
+    feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
+                            statement=statement,
+                            columns=['id', 'title', 'file_url', 'download_url', 'downloaded'])
+    return feeds_df
+
+
 def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.models.Feed:
     """
 

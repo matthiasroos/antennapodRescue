@@ -114,10 +114,16 @@ def find_old_unusually_short_episodes(episodes_db_df: pd.DataFrame,
 def prepare_deletion_of_episodes_and_media(episodes_df: pd.DataFrame,
                                            media_df: pd.DataFrame) -> typing.Tuple[typing.List[int], typing.List[int]]:
     """
+    Prepare lists of the episodes and the corresponding media to be deleted.
 
-    :param episodes_df:
-    :param media_df:
-    :return:
+    The dataframe episodes_df should only contain episodes, which are to be deleted,
+    as its id column is returned as episodes_to_delete list.
+    Using this list of feeditem ids, the corresponding media ids are also returned.
+
+    :param episodes_df: dataframe containing all episodes to be deleted
+    :param media_df: dataframe containing all media
+    :return: list of feeditem ids to be deleted,
+             list of corresponding media ids to be deleted
     """
     episodes_to_delete = episodes_df['id'].tolist()
     episodes_to_delete = [int(epi) for epi in episodes_to_delete]

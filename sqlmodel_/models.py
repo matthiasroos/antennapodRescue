@@ -31,6 +31,15 @@ class FeedItem(sqlmodel.SQLModel, table=True):
     item_identifier: str
     image_url: str
 
+    @classmethod
+    def find_items_for_feed(cls, feed_id: int):
+        """
+
+        :param feed_id:
+        :return:
+        """
+        return sqlmodel.select(FeedItem).where(FeedItem.feed == feed_id)
+
 
 class FeedMedia(sqlmodel.SQLModel, table=True):
     """
@@ -46,3 +55,14 @@ class FeedMedia(sqlmodel.SQLModel, table=True):
     feeditem: int = sqlmodel.Field(default=None, foreign_key="FeedItems.id")
     played_duration: int
     last_played_time: int
+
+    @classmethod
+    def find_media_for_feed(cls, feed_id: int):
+        """
+
+        :param feed_id:
+        :return:
+        """
+        return sqlmodel.select(FeedMedia) \
+            .filter(FeedMedia.feeditem == FeedItem.id) \
+            .where(FeedItem.feed == feed_id)

@@ -83,7 +83,7 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[s
     :param feed_id:
     :return:
     """
-    statement = sqlmodel.select(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.feed == feed_id)
+    statement = sqlmodel_.models.FeedItem.find_items_for_feed(feed_id=feed_id)
     episodes = fetch_all(sqlite_filename=sqlite_filename,
                          statement=statement)
     return episodes
@@ -96,7 +96,7 @@ def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFram
     :param feed_id:
     :return:
     """
-    statement = sqlmodel.select(sqlmodel_.models.FeedItem).where(sqlmodel_.models.FeedItem.feed == feed_id)
+    statement = sqlmodel_.models.FeedItem.find_items_for_feed(feed_id=feed_id)
     columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
 
     episodes_df = fetch_all_df(sqlite_filename=sqlite_filename,
@@ -112,9 +112,7 @@ def fetch_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmo
     :param feed_id:
     :return:
     """
-    statement = sqlmodel.select(sqlmodel_.models.FeedMedia) \
-        .filter(sqlmodel_.models.FeedMedia.feeditem == sqlmodel_.models.FeedItem.id) \
-        .where(sqlmodel_.models.FeedItem.feed == feed_id)
+    statement = sqlmodel_.models.FeedMedia().find_media_for_feed(feed_id=feed_id)
     media = fetch_all(sqlite_filename=sqlite_filename,
                       statement=statement)
     return media
@@ -127,9 +125,7 @@ def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     :param feed_id:
     :return:
     """
-    statement = sqlmodel.select(sqlmodel_.models.FeedMedia) \
-        .filter(sqlmodel_.models.FeedMedia.feeditem == sqlmodel_.models.FeedItem.id)\
-        .where(sqlmodel_.models.FeedItem.feed == feed_id)
+    statement = sqlmodel_.models.FeedMedia().find_media_for_feed(feed_id=feed_id)
     columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
     media_df = fetch_all_df(sqlite_filename=sqlite_filename,
                             statement=statement,

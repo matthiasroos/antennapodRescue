@@ -15,6 +15,23 @@ class Feed(sqlmodel.SQLModel, table=True):
     download_url: str
     downloaded: int
 
+    @classmethod
+    def fetch_feeds(cls):
+        """
+
+        :return:
+        """
+        return sqlmodel.select(Feed)
+
+    @classmethod
+    def fetch_single_feed(cls, feed_id: int):
+        """
+
+        :param feed_id:
+        :return:
+        """
+        return sqlmodel.select(Feed).where(Feed.id == feed_id)
+
 
 class FeedItem(sqlmodel.SQLModel, table=True):
     """

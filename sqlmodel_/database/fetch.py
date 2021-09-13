@@ -45,7 +45,7 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Fe
     :param sqlite_filename: file name of the sqlite database file
     :return:
     """
-    statement = sqlmodel.select(sqlmodel_.models.Feed)
+    statement = sqlmodel_.models.Feed().fetch_feeds()
     feeds = fetch_all(sqlite_filename=sqlite_filename,
                       statement=statement)
     return feeds
@@ -57,7 +57,7 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     :param sqlite_filename: file name of the sqlite database file
     :return:
     """
-    statement = sqlmodel.select(sqlmodel_.models.Feed)
+    statement = sqlmodel_.models.Feed().fetch_feeds()
     feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
                             statement=statement,
                             columns=['id', 'title', 'file_url', 'download_url', 'downloaded'])
@@ -73,7 +73,7 @@ def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.m
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
     with sqlmodel.Session(engine) as session:
-        statement = sqlmodel.select(sqlmodel_.models.Feed).where(sqlmodel_.models.Feed.id == feed_id)
+        statement = sqlmodel_.models.Feed().fetch_single_feed(feed_id=feed_id)
         feed = session.exec(statement).one()
     return feed
 

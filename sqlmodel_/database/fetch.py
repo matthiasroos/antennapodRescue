@@ -9,8 +9,8 @@ import sqlmodel_.models
 def fetch_all(sqlite_filename: str, statement):
     """
 
-    :param sqlite_filename:
-    :param statement:
+    :param sqlite_filename: file name of the sqlite database file
+    :param statement: sql statement
     :return:
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
@@ -19,12 +19,14 @@ def fetch_all(sqlite_filename: str, statement):
     return data
 
 
-def fetch_all_df(sqlite_filename: str, statement, columns: typing.List[str]) -> pd.DataFrame:
+def fetch_all_df(sqlite_filename: str,
+                 statement,
+                 columns: typing.List[str]) -> pd.DataFrame:
     """
 
-    :param sqlite_filename:
-    :param statement:
-    :param columns:
+    :param sqlite_filename: file name of the sqlite database file
+    :param statement: sql statement
+    :param columns: list of column names
     :return:
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
@@ -40,7 +42,7 @@ def fetch_all_df(sqlite_filename: str, statement, columns: typing.List[str]) -> 
 def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Feed]:
     """
 
-    :param sqlite_filename:
+    :param sqlite_filename: file name of the sqlite database file
     :return:
     """
     statement = sqlmodel.select(sqlmodel_.models.Feed)
@@ -52,7 +54,7 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Fe
 def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     """
 
-    :param sqlite_filename:
+    :param sqlite_filename: file name of the sqlite database file
     :return:
     """
     statement = sqlmodel.select(sqlmodel_.models.Feed)
@@ -65,8 +67,8 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
 def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.models.Feed:
     """
 
-    :param sqlite_filename:
-    :param feed_id:
+    :param sqlite_filename: file name of the sqlite database file
+    :param feed_id: id of the feed
     :return:
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
@@ -79,8 +81,8 @@ def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.m
 def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmodel_.models.FeedItem]:
     """
 
-    :param sqlite_filename:
-    :param feed_id:
+    :param sqlite_filename: file name of the sqlite database file
+    :param feed_id: id of the feed
     :return:
     """
     statement = sqlmodel_.models.FeedItem.find_items_for_feed(feed_id=feed_id)
@@ -92,8 +94,8 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[s
 def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     """
 
-    :param sqlite_filename:
-    :param feed_id:
+    :param sqlite_filename: file name of the sqlite database file
+    :param feed_id: id of the feed
     :return:
     """
     statement = sqlmodel_.models.FeedItem.find_items_for_feed(feed_id=feed_id)
@@ -108,8 +110,8 @@ def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFram
 def fetch_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmodel_.models.FeedMedia]:
     """
 
-    :param sqlite_filename:
-    :param feed_id:
+    :param sqlite_filename: file name of the sqlite database file
+    :param feed_id: id of the feed
     :return:
     """
     statement = sqlmodel_.models.FeedMedia().find_media_for_feed(feed_id=feed_id)
@@ -121,8 +123,8 @@ def fetch_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmo
 def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     """
 
-    :param sqlite_filename:
-    :param feed_id:
+    :param sqlite_filename: file name of the sqlite database file
+    :param feed_id: id of the feed
     :return:
     """
     statement = sqlmodel_.models.FeedMedia().find_media_for_feed(feed_id=feed_id)

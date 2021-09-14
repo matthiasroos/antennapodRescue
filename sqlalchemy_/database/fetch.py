@@ -38,6 +38,31 @@ def fetch_all_df(sqlite_filename: str, statement, columns: typing.List[str]) -> 
     return data_df
 
 
+def fetch_feeds_from_db(sqlite_filename: str) -> typing.List:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    statement = sqlalchemy.sql.select(sqlalchemy_.models.Feed)
+    feeds = fetch_all(sqlite_filename=sqlite_filename,
+                      statement=statement)
+    return feeds
+
+
+def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    statement = sqlalchemy.sql.select(sqlalchemy_.models.Feed)
+    feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
+                            statement=statement,
+                            columns=['id', 'title', 'file_url', 'download_url', 'downloaded', 'feeditems'])
+    return feeds_df
+
+
 def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List:
     """
 

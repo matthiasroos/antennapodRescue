@@ -10,7 +10,7 @@ def fetch_all(sqlite_filename: str, statement):
     """
 
     :param sqlite_filename: file name of the sqlite database file
-    :param statement: sql statement
+    :param statement: SQL query to be executed
     :return:
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
@@ -25,7 +25,7 @@ def fetch_all_df(sqlite_filename: str,
     """
 
     :param sqlite_filename: file name of the sqlite database file
-    :param statement: sql statement
+    :param statement: SQL query to be executed
     :param columns: list of column names
     :return:
     """

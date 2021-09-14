@@ -84,12 +84,15 @@ class FeedMedia(Base):
     Table FeedMedia
     """
     __tablename__ = "FeedMedia"
+
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     duration: datetime.timedelta = sqlalchemy.Column(Milliseconds)
     download_url = sqlalchemy.Column(sqlalchemy.String)
     downloaded = sqlalchemy.Column(sqlalchemy.Integer)
     filesize = sqlalchemy.Column(sqlalchemy.Integer)
     playback_completion_date: int = sqlalchemy.Column(sqlalchemy.Integer)
+
     feeditem = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('FeedItems.id'))
+
     played_duration: int = sqlalchemy.Column(sqlalchemy.Integer)
     last_played_time: int = sqlalchemy.Column(sqlalchemy.Integer)

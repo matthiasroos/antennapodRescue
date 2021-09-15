@@ -2,11 +2,13 @@ import typing
 
 import pandas as pd
 import sqlmodel
+import sqlmodel.sql.expression
 
 import sqlmodel_.models
 
 
-def fetch_all(sqlite_filename: str, statement):
+def fetch_all(sqlite_filename: str,
+              statement: typing.Union[sqlmodel.sql.expression.Select, sqlmodel.sql.expression.SelectOfScalar]):
     """
 
     :param sqlite_filename: file name of the sqlite database file
@@ -20,7 +22,7 @@ def fetch_all(sqlite_filename: str, statement):
 
 
 def fetch_all_df(sqlite_filename: str,
-                 statement,
+                 statement: typing.Union[sqlmodel.sql.expression.Select, sqlmodel.sql.expression.SelectOfScalar],
                  columns: typing.List[str]) -> pd.DataFrame:
     """
 

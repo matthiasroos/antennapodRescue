@@ -75,7 +75,7 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List:
     :param feed_id:
     :return:
     """
-    statement = sqlalchemy.sql.select(sqlalchemy_.models.FeedItem).where(sqlalchemy_.models.FeedItem.feed == feed_id)
+    statement = sqlalchemy_.models.FeedItem().where(sqlalchemy_.models.FeedItem.feed == feed_id)
     episodes = fetch_all(sqlite_filename=sqlite_filename,
                          statement=statement)
     return episodes
@@ -91,7 +91,7 @@ def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typin
     :return: dataframe containing all episodes
     """
     sort_by = [] if not sort_by else sort_by
-    statement = sqlalchemy.sql.select(sqlalchemy_.models.FeedItem).where(sqlalchemy_.models.FeedItem.feed == feed_id)
+    statement = sqlalchemy_.models.FeedItem().where(sqlalchemy_.models.FeedItem.feed == feed_id)
     columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
 
     episodes_df = fetch_all_df(sqlite_filename=sqlite_filename,

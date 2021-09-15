@@ -47,6 +47,12 @@ class Milliseconds(sqlalchemy.types.TypeDecorator):
         return datetime.timedelta(milliseconds=value)
 
 
+class WhereMixin:
+
+    def where(self, *args):
+        return sqlalchemy.sql.select(self.__class__).where(*args)
+
+
 class Feed(Base):
     """
     Table Feeds
@@ -60,7 +66,7 @@ class Feed(Base):
     downloaded = sqlalchemy.Column(sqlalchemy.Integer)
 
 
-class FeedItem(Base):
+class FeedItem(Base, WhereMixin):
     """
     Table FeedItems
     """

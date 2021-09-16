@@ -2,6 +2,7 @@
 import typing
 
 import sqlmodel
+import sqlmodel.sql.expression
 
 
 class Feed(sqlmodel.SQLModel, table=True):
@@ -16,7 +17,8 @@ class Feed(sqlmodel.SQLModel, table=True):
     downloaded: int
 
     @classmethod
-    def fetch_feeds(cls):
+    def fetch_feeds(cls) -> typing.Union[sqlmodel.sql.expression.Select,
+                                         sqlmodel.sql.expression.SelectOfScalar]:
         """
 
         :return:
@@ -24,7 +26,8 @@ class Feed(sqlmodel.SQLModel, table=True):
         return sqlmodel.select(Feed)
 
     @classmethod
-    def fetch_single_feed(cls, feed_id: int):
+    def fetch_single_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                             sqlmodel.sql.expression.SelectOfScalar]:
         """
 
         :param feed_id:
@@ -49,7 +52,8 @@ class FeedItem(sqlmodel.SQLModel, table=True):
     image_url: str
 
     @classmethod
-    def find_items_for_feed(cls, feed_id: int):
+    def find_items_for_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                               sqlmodel.sql.expression.SelectOfScalar]:
         """
 
         :param feed_id:
@@ -74,7 +78,8 @@ class FeedMedia(sqlmodel.SQLModel, table=True):
     last_played_time: int
 
     @classmethod
-    def find_media_for_feed(cls, feed_id: int):
+    def find_media_for_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                               sqlmodel.sql.expression.SelectOfScalar]:
         """
 
         :param feed_id:

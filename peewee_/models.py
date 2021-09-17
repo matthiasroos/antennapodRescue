@@ -16,3 +16,24 @@ class Feed(peewee.Model):
     class Meta:
         """Inner class"""
         table_name = 'Feeds'
+
+
+class FeedItem(peewee.Model):
+    """
+    Table FeedItems
+    """
+    id = peewee.IntegerField(unique=True, primary_key=True)
+    title = peewee.CharField()
+    pubDate = peewee.IntegerField()
+    read = peewee.IntegerField()
+    link = peewee.CharField()
+    description = peewee.CharField()
+
+    feed = peewee.IntegerField()
+
+    item_identifier = peewee.CharField()
+    image_url = peewee.CharField()
+
+    class Meta:
+        """Meta Class"""
+        table_name = 'FeedItems'

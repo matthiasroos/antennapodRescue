@@ -58,3 +58,21 @@ def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typin
                                columns=columns)
     episodes_df = episodes_df.sort_values(by=sort_by)
     return episodes_df
+
+
+def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
+    """
+    Fetch all media for a feed from db and return them as a dataframe.
+
+    :param sqlite_filename: file name of the sqlite database file
+    :param feed_id: id of the feed
+    :return: dataframe containing all media
+    """
+    statement = peewee_.models.FeedMedia.select() \
+        .join(peewee_.models.FeedItem, on=(peewee_.models.FeedMedia.feeditem == peewee_.models.FeedItem.id))\
+        .where(peewee_.models.FeedItem.feed == feed_id)
+    columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
+    media_df = fetch_all_df(sqlite_filename=sqlite_filename,
+                            statement=statement,
+                            columns=columns)
+    return media_df

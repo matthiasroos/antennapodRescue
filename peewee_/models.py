@@ -37,3 +37,24 @@ class FeedItem(peewee.Model):
     class Meta:
         """Meta Class"""
         table_name = 'FeedItems'
+
+
+class FeedMedia(peewee.Model):
+    """
+    Table FeedMedia
+    """
+    id = peewee.IntegerField(unique=True, primary_key=True)
+    duration = peewee.IntegerField()
+    download_url = peewee.IntegerField()
+    downloaded = peewee.CharField()
+    filesize = peewee.IntegerField()
+    playback_completion_date = peewee.IntegerField()
+
+    feeditem = peewee.IntegerField()
+
+    played_duration = peewee.IntegerField()
+    last_played_time = peewee.IntegerField()
+
+    class Meta:
+        """Meta Class"""
+        table_name = 'FeedMedia'

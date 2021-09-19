@@ -20,8 +20,9 @@ class Feed(sqlmodel.SQLModel, table=True):
     def fetch_feeds(cls) -> typing.Union[sqlmodel.sql.expression.Select,
                                          sqlmodel.sql.expression.SelectOfScalar]:
         """
+        Return SQL expression to fetch all feeds.
 
-        :return:
+        :return: sql expression
         """
         return sqlmodel.select(Feed)
 
@@ -29,9 +30,10 @@ class Feed(sqlmodel.SQLModel, table=True):
     def fetch_single_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
                                                              sqlmodel.sql.expression.SelectOfScalar]:
         """
+        Return SQL expression to fetch a single feed.
 
-        :param feed_id:
-        :return:
+        :param feed_id: id of the feed
+        :return: sql expression
         """
         return sqlmodel.select(Feed).where(Feed.id == feed_id)
 
@@ -55,9 +57,10 @@ class FeedItem(sqlmodel.SQLModel, table=True):
     def find_items_for_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
                                                                sqlmodel.sql.expression.SelectOfScalar]:
         """
+        Return SQL expression to fetch all items of a feed.
 
-        :param feed_id:
-        :return:
+        :param feed_id: id of the feed
+        :return: sql expression
         """
         return sqlmodel.select(FeedItem).where(FeedItem.feed == feed_id)
 
@@ -81,9 +84,10 @@ class FeedMedia(sqlmodel.SQLModel, table=True):
     def find_media_for_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
                                                                sqlmodel.sql.expression.SelectOfScalar]:
         """
+        Return SQL expression to fetch all media of a feed.
 
-        :param feed_id:
-        :return:
+        :param feed_id: id of the feed
+        :return: sql expression
         """
         return sqlmodel.select(FeedMedia) \
             .filter(FeedMedia.feeditem == FeedItem.id) \

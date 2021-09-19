@@ -10,11 +10,13 @@ def fetch_all_df(sqlite_filename: str,
                  statement: peewee.ModelSelect,
                  columns: typing.List[str]) -> pd.DataFrame:
     """
+    Base method.
+    Fetch all rows of a table from db and return a dataframe.
 
-    :param sqlite_filename:
-    :param statement:
-    :param columns:
-    :return:
+    :param sqlite_filename: file name of the sqlite database file
+    :param statement: peewee SQL statement
+    :param columns: list of column names
+    :return: dataframe containing all data
     """
     connection = peewee.SqliteDatabase(sqlite_filename).connection()
     sql, params = statement.sql()
@@ -31,7 +33,7 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     Fetch all feeds from db and return them as a dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
-    :return:
+    :return: dataframe containing all feeds
     """
     statement = peewee_.models.Feed.select()
     feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
@@ -42,12 +44,12 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
 
 def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.List[str] = None) -> pd.DataFrame:
     """
-
+    Fetch all episodes for a feed from db and return them as a sorted dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
-    :param feed_id:
-    :param sort_by:
-    :return:
+    :param feed_id: id of the feed
+    :param sort_by: list of column names to sorted by
+    :return: dataframe containing all episodes
     """
     sort_by = [] if not sort_by else sort_by
     statement = peewee_.models.FeedItem.select().where(peewee_.models.FeedItem.feed == feed_id)

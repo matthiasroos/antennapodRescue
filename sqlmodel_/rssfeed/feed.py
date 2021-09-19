@@ -60,8 +60,7 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
             datetime_format_2 = '%a, %d %b %Y %H:%M:%S %Z'
             datetime_entry = datetime.datetime.strptime(ep.find('pubDate').text, datetime_format_2).timestamp() * 1000
 
-        item = [ep.find('title').text, int(datetime_entry), 0, ep.find('link').text, ep.find('description'),
-                ep.find('guid').text]
+        item = [ep.find('title').text, int(datetime_entry), 0, ep.find('description'), ep.find('guid').text]
         episode_list.append(item)
     return pd.DataFrame(episode_list,
-                        columns=['title', 'pubDate', 'read', 'link', 'description', 'item_identifier'])
+                        columns=['title', 'pubDate', 'read', 'description', 'item_identifier'])

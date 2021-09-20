@@ -2,12 +2,13 @@ import typing
 
 import pandas as pd
 import sqlalchemy
+import sqlalchemy.engine.row
 import sqlalchemy.orm
 
 import sqlalchemy_.models
 
 
-def fetch_all(sqlite_filename: str, statement) -> typing.List:
+def fetch_all(sqlite_filename: str, statement) -> typing.List[sqlalchemy.engine.row.Row]:
     """
     Base method.
     Fetch all rows of a table from db and return a list of SQLAlchemy Row objects.
@@ -30,7 +31,7 @@ def fetch_all_df(sqlite_filename: str, statement, columns: typing.List[str]) -> 
     :param sqlite_filename: file name of the sqlite database file
     :param statement: SQL query to be executed
     :param columns: list of column names
-    :return:
+    :return: dataframe containing all data
     """
     engine = sqlalchemy.create_engine(f'sqlite+pysqlite:///{sqlite_filename}')
     con = engine.connect()
@@ -42,11 +43,12 @@ def fetch_all_df(sqlite_filename: str, statement, columns: typing.List[str]) -> 
     return data_df
 
 
-def fetch_feeds_from_db(sqlite_filename: str) -> typing.List:
+def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlalchemy.engine.row.Row]:
     """
+    Fetch feeds from db and return them as a list of SQLAlchemy Row objects.
 
     :param sqlite_filename: file name of the sqlite database file
-    :return:
+    :return: list of all feeds as sqlalchemy.engine.row.Row
     """
     statement = sqlalchemy.sql.select(sqlalchemy_.models.Feed)
     feeds = fetch_all(sqlite_filename=sqlite_filename,
@@ -59,7 +61,7 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     Fetch all feeds from db and return them as a dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
-    :return:
+    :return: dataframe containing all feeds
     """
     statement = sqlalchemy.sql.select(sqlalchemy_.models.Feed)
     feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
@@ -68,12 +70,13 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     return feeds_df
 
 
-def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List:
+def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlalchemy.engine.row.Row]:
     """
+    Fetch all feeditems for a feed from db and return them as a list of SQLAlchemy Row objects.
 
     :param sqlite_filename: file name of the sqlite database file
-    :param feed_id:
-    :return:
+    :param feed_id: id of the feed
+    :return: list of all feeditems for a feed as sqlalchemy.engine.row.Row
     """
     statement = sqlalchemy_.models.FeedItem().where(sqlalchemy_.models.FeedItem.feed == feed_id)
     episodes = fetch_all(sqlite_filename=sqlite_filename,

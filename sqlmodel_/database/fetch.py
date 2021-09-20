@@ -8,8 +8,11 @@ import sqlmodel_.models
 
 
 def fetch_all(sqlite_filename: str,
-              statement: typing.Union[sqlmodel.sql.expression.Select, sqlmodel.sql.expression.SelectOfScalar]):
+              statement: typing.Union[sqlmodel.sql.expression.Select, sqlmodel.sql.expression.SelectOfScalar]) \
+        -> typing.List:
     """
+    Base method.
+    Fetch all rows of a table from db and return a list.
 
     :param sqlite_filename: file name of the sqlite database file
     :param statement: SQL query to be executed
@@ -25,11 +28,13 @@ def fetch_all_df(sqlite_filename: str,
                  statement: typing.Union[sqlmodel.sql.expression.Select, sqlmodel.sql.expression.SelectOfScalar],
                  columns: typing.List[str]) -> pd.DataFrame:
     """
+    Base method.
+    Fetch all rows of a table from db and return a dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
     :param statement: SQL query to be executed
     :param columns: list of column names
-    :return:
+    :return: dataframe containing all data
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
     con = engine.connect()
@@ -43,9 +48,10 @@ def fetch_all_df(sqlite_filename: str,
 
 def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Feed]:
     """
+    Fetch all feeds from db and return them as a list of Feed objects.
 
     :param sqlite_filename: file name of the sqlite database file
-    :return:
+    :return: list of feed data as Feed objects
     """
     statement = sqlmodel_.models.Feed().fetch_feeds()
     feeds = fetch_all(sqlite_filename=sqlite_filename,
@@ -55,9 +61,10 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlmodel_.models.Fe
 
 def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     """
+    Fetch all feeds from db and return them as a dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
-    :return:
+    :return: dataframe containing all feeds
     """
     statement = sqlmodel_.models.Feed().fetch_feeds()
     feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
@@ -68,10 +75,11 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
 
 def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.models.Feed:
     """
+    Fetch single from db and return it as a Feed object.
 
     :param sqlite_filename: file name of the sqlite database file
     :param feed_id: id of the feed
-    :return:
+    :return: feed data as Feed object
     """
     engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
     with sqlmodel.Session(engine) as session:
@@ -82,10 +90,11 @@ def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.m
 
 def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmodel_.models.FeedItem]:
     """
+    Fetch all feeditems for a feed from db and return them as a list of FeedItem objects.
 
     :param sqlite_filename: file name of the sqlite database file
     :param feed_id: id of the feed
-    :return:
+    :return: list of feeditems as FeedItem objects.
     """
     statement = sqlmodel_.models.FeedItem.find_items_for_feed(feed_id=feed_id)
     episodes = fetch_all(sqlite_filename=sqlite_filename,
@@ -95,10 +104,11 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[s
 
 def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     """
+    Fetch all episodes for a feed from db and return them as a dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
     :param feed_id: id of the feed
-    :return:
+    :return: dataframe containing all episodes
     """
     statement = sqlmodel_.models.FeedItem.find_items_for_feed(feed_id=feed_id)
     columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
@@ -111,10 +121,11 @@ def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFram
 
 def fetch_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmodel_.models.FeedMedia]:
     """
+    Fetch all media for a feed from db and return them as a list of FeedMedia objects.
 
     :param sqlite_filename: file name of the sqlite database file
     :param feed_id: id of the feed
-    :return:
+    :return: list of feed media as FeedMedia objects
     """
     statement = sqlmodel_.models.FeedMedia().find_media_for_feed(feed_id=feed_id)
     media = fetch_all(sqlite_filename=sqlite_filename,
@@ -124,10 +135,11 @@ def fetch_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlmo
 
 def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     """
+    Fetch all media for a feed from db and return them as a dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
     :param feed_id: id of the feed
-    :return:
+    :return: dataframe containing all media
     """
     statement = sqlmodel_.models.FeedMedia().find_media_for_feed(feed_id=feed_id)
     columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']

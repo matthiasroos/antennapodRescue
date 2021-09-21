@@ -7,6 +7,7 @@ import sqlalchemy.engine.row
 import sqlalchemy.orm
 import sqlalchemy.sql.selectable
 
+import database.fetch
 import sqlalchemy_.models
 
 
@@ -84,10 +85,12 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     :param sqlite_filename: file name of the sqlite database file
     :return: dataframe containing all feeds
     """
+    connection = get_connection(sqlite_filename=sqlite_filename)
     statement = sqlalchemy.sql.select(sqlalchemy_.models.Feed)
-    feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                            statement=statement,
-                            columns=['id', 'title', 'file_url', 'download_url', 'downloaded', 'feeditems'])
+    feeds_df = database.fetch.fetch_all_df(
+        connection=connection,
+        statement=statement,
+        columns=['id', 'title', 'file_url', 'download_url', 'downloaded', 'feeditems'])
     return feeds_df
 
 

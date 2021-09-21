@@ -5,6 +5,7 @@ import sqlalchemy.engine
 import sqlmodel
 import sqlmodel.sql.expression
 
+import database.fetch
 import sqlmodel_.models
 
 
@@ -15,6 +16,7 @@ def get_engine(sqlite_filename: str) -> sqlalchemy.engine.Engine:
     :return:
     """
     return sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+
 
 def get_connection(sqlite_filename: str) -> sqlalchemy.engine.Connection:
     """
@@ -84,10 +86,12 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     :param sqlite_filename: file name of the sqlite database file
     :return: dataframe containing all feeds
     """
+    connection = get_connection(sqlite_filename=sqlite_filename)
     statement = sqlmodel_.models.Feed().fetch_feeds()
-    feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                            statement=statement,
-                            columns=['id', 'title', 'file_url', 'download_url', 'downloaded'])
+    feeds_df = database.fetch.fetch_all_df(
+        connection=connection,
+        statement=statement,
+        columns=['id', 'title', 'file_url', 'download_url', 'downloaded'])
     return feeds_df
 
 

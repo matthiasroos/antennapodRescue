@@ -3,6 +3,7 @@ import typing
 import pandas as pd
 import peewee
 
+import database.fetch
 import peewee_.models
 
 
@@ -44,10 +45,12 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     :param sqlite_filename: file name of the sqlite database file
     :return: dataframe containing all feeds
     """
+    connection = get_connection(sqlite_filename=sqlite_filename)
     statement = peewee_.models.Feed.select()
-    feeds_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                            statement=statement,
-                            columns=['id', 'title', 'file_url', 'download_url', 'downloaded', 'feeditems'])
+    feeds_df = database.fetch.fetch_all_df(
+        connection=connection,
+        statement=statement,
+        columns=['id', 'title', 'file_url', 'download_url', 'downloaded', 'feeditems'])
     return feeds_df
 
 

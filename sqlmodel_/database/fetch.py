@@ -1,10 +1,28 @@
 import typing
 
 import pandas as pd
+import sqlalchemy.engine
 import sqlmodel
 import sqlmodel.sql.expression
 
 import sqlmodel_.models
+
+
+def get_engine(sqlite_filename: str) -> sqlalchemy.engine.Engine:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    return sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+
+def get_connection(sqlite_filename: str) -> sqlalchemy.engine.Connection:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    return get_engine(sqlite_filename=sqlite_filename).connect()
 
 
 def fetch_all(sqlite_filename: str,
@@ -12,7 +30,7 @@ def fetch_all(sqlite_filename: str,
         -> typing.List:
     """
     Base method.
-    Fetch all rows of a table from db and return a list.
+    Fetch all rows of a table from db and return them as a list.
 
     :param sqlite_filename: file name of the sqlite database file
     :param statement: SQL query to be executed

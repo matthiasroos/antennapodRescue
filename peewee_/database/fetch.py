@@ -6,6 +6,15 @@ import peewee
 import peewee_.models
 
 
+def get_connection(sqlite_filename: str):
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    return peewee.SqliteDatabase(sqlite_filename).connection()
+
+
 def fetch_all_df(sqlite_filename: str,
                  statement: peewee.ModelSelect,
                  columns: typing.List[str]) -> pd.DataFrame:

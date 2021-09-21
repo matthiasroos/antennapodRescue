@@ -2,13 +2,34 @@ import typing
 
 import pandas as pd
 import sqlalchemy
+import sqlalchemy.engine
 import sqlalchemy.engine.row
 import sqlalchemy.orm
+import sqlalchemy.sql.selectable
 
 import sqlalchemy_.models
 
 
-def fetch_all(sqlite_filename: str, statement) -> typing.List[sqlalchemy.engine.row.Row]:
+def get_engine(sqlite_filename) -> sqlalchemy.engine.Engine:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    return sqlalchemy.create_engine(f'sqlite+pysqlite:///{sqlite_filename}')
+
+
+def get_connection(sqlite_filename: str) -> sqlalchemy.engine.Connection:
+    """
+
+    :param sqlite_filename:
+    :return:
+    """
+    return get_engine(sqlite_filename=sqlite_filename).connect()
+
+
+def fetch_all(sqlite_filename: str,
+              statement: sqlalchemy.sql.selectable.Select) -> typing.List[sqlalchemy.engine.row.Row]:
     """
     Base method.
     Fetch all rows of a table from db and return a list of SQLAlchemy Row objects.
@@ -17,13 +38,14 @@ def fetch_all(sqlite_filename: str, statement) -> typing.List[sqlalchemy.engine.
     :param statement: SQL query to be executed
     :return:
     """
-    engine = sqlalchemy.create_engine(f'sqlite+pysqlite:///{sqlite_filename}')
-    with sqlalchemy.orm.Session(engine) as session:
+    with sqlalchemy.orm.Session(get_engine(sqlite_filename=sqlite_filename)) as session:
         data = session.execute(statement).all()
     return data
 
 
-def fetch_all_df(sqlite_filename: str, statement, columns: typing.List[str]) -> pd.DataFrame:
+def fetch_all_df(sqlite_filename: str,
+                 statement: sqlalchemy.sql.selectable.Select,
+                 columns: typing.List[str]) -> pd.DataFrame:
     """
     Base method.
     Fetch all rows of a table from db and return a dataframe.
@@ -33,8 +55,7 @@ def fetch_all_df(sqlite_filename: str, statement, columns: typing.List[str]) -> 
     :param columns: list of column names
     :return: dataframe containing all data
     """
-    engine = sqlalchemy.create_engine(f'sqlite+pysqlite:///{sqlite_filename}')
-    con = engine.connect()
+    con = get_connection(sqlite_filename=sqlite_filename)
     data_df = pd.read_sql(
         sql=statement,
         con=con,

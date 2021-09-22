@@ -8,9 +8,10 @@ import requests
 
 def download_xml(url: str) -> typing.Optional[bytes]:
     """
+    Download the XML file of a feed and return its content.
 
-    :param url:
-    :return:
+    :param url: URL of the XML file
+    :return: content of the XML file as bytes
     """
     response = requests.get(url=url)
     if response.status_code != 200:
@@ -22,9 +23,10 @@ def download_xml(url: str) -> typing.Optional[bytes]:
 
 def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
     """
+    Parse XML content and return it as a dataframe.
 
-    :param xml:
-    :return:
+    :param xml: XML content as bytes
+    :return: dataframe containing some information from the XML
     """
     root = ET.fromstring(xml)
     episode_list = []

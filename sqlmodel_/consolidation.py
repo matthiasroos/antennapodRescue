@@ -4,14 +4,16 @@ import numpy as np
 import pandas as pd
 
 
-def find_duplicate_episodes(episodes_df: pd.DataFrame) -> pd.DataFrame:
+def find_duplicate_episodes(episodes_df: pd.DataFrame,
+                            subset: typing.List[str]) -> pd.DataFrame:
     """
 
     :param episodes_df:
+    :param subset:
     :return:
     """
     episodes_df_ = episodes_df.copy(deep=True)
-    episodes_df_ = episodes_df_[episodes_df_.duplicated(subset=['title'], keep=False)]
+    episodes_df_ = episodes_df_[episodes_df_.duplicated(subset=subset, keep=False)]
     return episodes_df_
 
 

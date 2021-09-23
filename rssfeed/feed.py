@@ -1,4 +1,5 @@
 import datetime
+import functools
 import typing
 import xml.etree.ElementTree as ET
 
@@ -6,6 +7,7 @@ import pandas as pd
 import requests
 
 
+@functools.lru_cache(None)
 def download_xml(url: str) -> typing.Optional[bytes]:
     """
     Download the XML file of a feed and return its content.

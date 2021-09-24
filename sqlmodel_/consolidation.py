@@ -31,6 +31,26 @@ def find_duplicate_episodes_and_merge_with_xml(episodes_db_df: pd.DataFrame,
     return episodes_merged_df
 
 
+def identify_old_episodes(episodes_db_df: pd.DataFrame,
+                          episodes_xml_df: pd.DataFrame) -> pd.DataFrame:
+    """
+
+
+    :param episodes_db_df: dataframe containing all feed episodes from the database
+    :param episodes_xml_df: dataframe containing all feed episodes currently in the xml file
+    :return: dataframe with all old episodes
+    """
+    if episodes_db_df.empty or episodes_xml_df.empty:
+        return pd.DataFrame()
+    episodes_merged_df = episodes_db_df.merge(episodes_xml_df, how='outer', on='item_identifier',
+                                              suffixes=('_db', '_xml'))
+    episodes_merged_df.sort_values(by=['pubDate_db'], inplace=True)
+    old_episodes_df = episodes_merged_df[
+        episodes_merged_df['pubDate_db'] < np.nanmin(episodes_merged_df['pubDate_xml'])]
+
+    return old_episodes_df
+
+
 def find_episodes_no_longer_in_xml(episodes_db_df: pd.DataFrame,
                                    episodes_xml_df: pd.DataFrame,
                                    keep_old: bool = True,
@@ -101,7 +121,7 @@ def find_old_unusually_short_episodes(episodes_db_df: pd.DataFrame,
                                               on='item_identifier',
                                               suffixes=('_db', '_xml'))
     episodes_merged_df = episodes_merged_df[
-        episodes_merged_df['pubDate_db'] <= np.nanmin(episodes_merged_df['pubDate_xml'])]
+        episodes_merged_df['pubDate_db'] < np.nanmin(episodes_merged_df['pubDate_xml'])]
 
     episodes_media_merged_df = episodes_merged_df.merge(media_df,
                                                         how='left',

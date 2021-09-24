@@ -56,13 +56,12 @@ def fetch_all_df(sqlite_filename: str,
     :param columns: list of column names
     :return: dataframe containing all data
     """
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
-    con = engine.connect()
-    data_df = pd.read_sql(
-        sql=statement,
-        con=con,
+    connection = get_connection(sqlite_filename=sqlite_filename)
+
+    data_df = database.fetch.fetch_all_df(
+        connection=connection,
+        statement=statement,
         columns=columns)
-    con.close()
     return data_df
 
 
@@ -86,12 +85,13 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     :param sqlite_filename: file name of the sqlite database file
     :return: dataframe containing all feeds
     """
-    connection = get_connection(sqlite_filename=sqlite_filename)
     statement = sqlmodel_.models.Feed().fetch_feeds()
-    feeds_df = database.fetch.fetch_all_df(
-        connection=connection,
+    columns = ['id', 'title', 'file_url', 'download_url', 'downloaded']
+
+    feeds_df = fetch_all_df(
+        sqlite_filename=sqlite_filename,
         statement=statement,
-        columns=['id', 'title', 'file_url', 'download_url', 'downloaded'])
+        columns=columns)
     return feeds_df
 
 
@@ -165,6 +165,7 @@ def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
     """
     statement = sqlmodel_.models.FeedMedia().find_media_for_feed(feed_id=feed_id)
     columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
+
     media_df = fetch_all_df(sqlite_filename=sqlite_filename,
                             statement=statement,
                             columns=columns)

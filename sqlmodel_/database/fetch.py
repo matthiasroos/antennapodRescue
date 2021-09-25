@@ -38,7 +38,7 @@ def fetch_all(sqlite_filename: str,
     :param statement: SQL query to be executed
     :return:
     """
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+    engine = get_engine(sqlite_filename=sqlite_filename)
     with sqlmodel.Session(engine) as session:
         data = session.exec(statement).all()
     return data
@@ -103,7 +103,7 @@ def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> sqlmodel_.m
     :param feed_id: id of the feed
     :return: feed data as Feed object
     """
-    engine = sqlmodel.create_engine(f'sqlite:///{sqlite_filename}')
+    engine = get_engine(sqlite_filename=sqlite_filename)
     with sqlmodel.Session(engine) as session:
         statement = sqlmodel_.models.Feed().fetch_single_feed(feed_id=feed_id)
         feed = session.exec(statement).one()

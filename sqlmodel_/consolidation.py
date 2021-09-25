@@ -42,7 +42,7 @@ def identify_old_episodes(episodes_db_df: pd.DataFrame,
     """
     if episodes_db_df.empty or episodes_xml_df.empty:
         return pd.DataFrame()
-    episodes_merged_df = episodes_db_df.merge(episodes_xml_df, how='outer', on='item_identifier',
+    episodes_merged_df = episodes_db_df.merge(episodes_xml_df, how='left', on='item_identifier',
                                               suffixes=('_db', '_xml'))
     episodes_merged_df.sort_values(by=['pubDate_db'], inplace=True)
     old_episodes_df = episodes_merged_df[
@@ -114,25 +114,19 @@ def find_old_unusually_short_episodes(episodes_db_df: pd.DataFrame,
     :return: dataframe containing all episodes which were deemed as too short
              dataframe containing all episodes from db and xml merged, augmented with media information
     """
-    if episodes_db_df.empty or episodes_xml_df.empty:
-        return pd.DataFrame(), pd.DataFrame()
-    episodes_merged_df = episodes_db_df.merge(episodes_xml_df,
-                                              how='left',
-                                              on='item_identifier',
-                                              suffixes=('_db', '_xml'))
-    episodes_merged_df = episodes_merged_df[
-        episodes_merged_df['pubDate_db'] < np.nanmin(episodes_merged_df['pubDate_xml'])]
+    old_episodes_df = identify_old_episodes(episodes_db_df=episodes_db_df,
+                                            episodes_xml_df=episodes_xml_df)
 
-    episodes_media_merged_df = episodes_merged_df.merge(media_df,
-                                                        how='left',
-                                                        left_on='id',
-                                                        right_on='feeditem',
-                                                        suffixes=('', '_media'))
+    episodes_media_merged_df = old_episodes_df.merge(media_df,
+                                                     how='left',
+                                                     left_on='id',
+                                                     right_on='feeditem',
+                                                     suffixes=('', '_media'))
     duration_mean = episodes_media_merged_df['duration'].mean()
     duration_std = episodes_media_merged_df['duration'].std()
 
-    two_sigma = duration_mean - 2 * duration_std
-    too_short_episodes_df = episodes_media_merged_df[episodes_media_merged_df['duration'] < two_sigma]
+    five_sigma = duration_mean - 5 * duration_std
+    too_short_episodes_df = episodes_media_merged_df[episodes_media_merged_df['duration'] < five_sigma]
 
     return too_short_episodes_df, episodes_media_merged_df
 

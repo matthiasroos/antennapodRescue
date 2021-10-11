@@ -3,6 +3,7 @@ import typing
 
 import pandas as pd
 import peewee
+import pypika
 import sqlalchemy.engine
 import sqlmodel.sql.expression
 
@@ -27,10 +28,13 @@ def fetch_all_df(connection: typing.Union[
     """
     if isinstance(statement, peewee.ModelSelect):
         sql, params = statement.sql()
+    elif isinstance(statement, pypika.queries.QueryBuilder):
+        sql = statement.get_sql()
+        params = None
     else:
         sql = statement
         params = None
-        
+
     data_df = pd.read_sql(
         sql=sql,
         params=params,

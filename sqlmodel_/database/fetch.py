@@ -124,20 +124,23 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[s
     return episodes
 
 
-def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
+def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.Iterable[str] = None) -> pd.DataFrame:
     """
     Fetch all episodes for a feed from db and return them as a dataframe.
 
     :param sqlite_filename: file name of the sqlite database file
     :param feed_id: id of the feed
+    :param sort_by: list of column names to sorted by
     :return: dataframe containing all episodes
     """
+    sort_by = [] if sort_by is None else list(sort_by)
     statement = sqlmodel_.models.FeedItem.find_items_for_feed(feed_id=feed_id)
     columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
 
     episodes_df = fetch_all_df(sqlite_filename=sqlite_filename,
                                statement=statement,
                                columns=columns)
+    episodes_df = episodes_df.sort_values(by=sort_by)
     return episodes_df
 
 

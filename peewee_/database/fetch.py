@@ -54,7 +54,7 @@ def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
     return feeds_df
 
 
-def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.List[str] = None) -> pd.DataFrame:
+def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.Iterable[str] = None) -> pd.DataFrame:
     """
     Fetch all episodes for a feed from db and return them as a sorted dataframe.
 
@@ -63,7 +63,7 @@ def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typin
     :param sort_by: list of column names to sorted by
     :return: dataframe containing all episodes
     """
-    sort_by = [] if not sort_by else sort_by
+    sort_by = [] if sort_by is None else list(sort_by)
     statement = peewee_.models.FeedItem.select().where(peewee_.models.FeedItem.feed == feed_id)
     columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
     print(statement.sql())

@@ -64,6 +64,15 @@ class FeedItem(sqlmodel.SQLModel, table=True):
         """
         return sqlmodel.select(FeedItem).where(FeedItem.feed == feed_id)
 
+    @classmethod
+    def delete_feed_item(cls, feed_item_id: int):
+        """
+
+        :param feed_item_id:
+        :return:
+        """
+        return sqlmodel.delete(FeedItem).where(FeedItem.id == feed_item_id)
+
 
 class FeedMedia(sqlmodel.SQLModel, table=True):
     """

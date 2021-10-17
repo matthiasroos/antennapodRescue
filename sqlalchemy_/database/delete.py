@@ -6,7 +6,7 @@ import fetch
 import sqlalchemy_.models
 
 
-def execute_delete_statement(sqlite_filename: str, statement):
+def execute_delete_statement(sqlite_filename: str, statement: sqlalchemy.sql.Delete):
     """
 
     :param sqlite_filename:

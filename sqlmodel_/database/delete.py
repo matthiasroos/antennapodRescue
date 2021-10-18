@@ -2,7 +2,7 @@ import typing
 
 import sqlmodel
 
-import fetch
+import sqlmodel_.database.fetch
 import sqlmodel_.models
 
 
@@ -14,7 +14,7 @@ def delete_feeditems_from_db(sqlite_filename: str, feed_item_ids: typing.List[in
     :return:
     """
 
-    engine = fetch.get_engine(sqlite_filename=sqlite_filename)
+    engine = sqlmodel_.database.fetch.get_engine(sqlite_filename=sqlite_filename)
     with sqlmodel.Session(engine) as session:
         for feed_item_id in feed_item_ids:
             statement = sqlmodel_.models.FeedItem.delete_feed_item(feed_item_id=feed_item_id)
@@ -30,7 +30,7 @@ def delete_media_from_db(sqlite_filename: str, media_ids: typing.List[int]) -> N
     :return:
     """
 
-    engine = fetch.get_engine(sqlite_filename=sqlite_filename)
+    engine = sqlmodel_.database.fetch.get_engine(sqlite_filename=sqlite_filename)
     with sqlmodel.Session(engine) as session:
         for media_id in media_ids:
             statement = sqlmodel.delete(sqlmodel_.models.FeedMedia).where(sqlmodel_.models.FeedMedia.id == media_id)

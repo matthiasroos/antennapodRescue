@@ -6,9 +6,18 @@ def parse_pubdate(element: xml.etree.ElementTree.Element):
     """
 
     >>> item = xml.etree.ElementTree.Element('item')
-    >>> f = xml.etree.ElementTree.SubElement(item, 'pubDate')
-    >>> f.text = 'Sun, 17 Oct 2021 11:00:32 GMT'
-    >>> parse_pubdate(element=item)
+    ... f = xml.etree.ElementTree.SubElement(item, 'pubDate')
+    ... f.text = 'Sun, 17 Oct 2021 11:00:32 GMT'
+    ... parse_pubdate(element=item)
+
+    1634461232000
+
+
+    >>> item = xml.etree.ElementTree.Element('item')
+    ... f = xml.etree.ElementTree.SubElement(item, 'pubDate')
+    ... f.text = 'Sun, 17 Oct 2021 11:00:32 +0200'
+    ... parse_pubdate(element=item)
+
     1634461232000
 
     :return:

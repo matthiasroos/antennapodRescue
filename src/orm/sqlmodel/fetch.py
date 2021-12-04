@@ -5,7 +5,7 @@ import sqlalchemy.engine
 import sqlmodel
 import sqlmodel.sql.expression
 
-import database.fetch
+import src.database.fetch
 import sqlmodel_.models
 
 
@@ -58,7 +58,7 @@ def fetch_all_df(sqlite_filename: str,
     """
     connection = get_connection(sqlite_filename=sqlite_filename)
 
-    data_df = database.fetch.fetch_all_df(
+    data_df = src.database.fetch.fetch_all_df(
         connection=connection,
         statement=statement,
         columns=columns)

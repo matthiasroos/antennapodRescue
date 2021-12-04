@@ -3,7 +3,7 @@ import typing
 import sqlalchemy.orm
 
 import fetch
-import sqlalchemy_.models
+import src.orm.sqlalchemy.models
 
 
 def execute_delete_statement(sqlite_filename: str, statement: sqlalchemy.sql.Delete):
@@ -27,7 +27,8 @@ def delete_feeditems_from_db(sqlite_filename: str, feed_items_id: typing.List[in
     :return:
     """
     statement = \
-        sqlalchemy.sql.delete(sqlalchemy_.models.FeedItem).where(sqlalchemy_.models.FeedItem.id.in_(feed_items_id))
+        sqlalchemy.sql.delete(src.orm.sqlalchemy.models.FeedItem).where(
+            src.orm.sqlalchemy.models.FeedItem.id.in_(feed_items_id))
     execute_delete_statement(sqlite_filename=sqlite_filename,
                              statement=statement)
 
@@ -40,6 +41,7 @@ def delete_media_from_db(sqlite_filename: str, media_ids: typing.List[int]) -> N
     :return:
     """
     statement = \
-        sqlalchemy.sql.delete(sqlalchemy_.models.FeedMedia).where(sqlalchemy_.models.FeedMedia.id.in_(media_ids))
+        sqlalchemy.sql.delete(src.orm.sqlalchemy.models.FeedMedia).where(
+            src.orm.sqlalchemy.models.FeedMedia.id.in_(media_ids))
     execute_delete_statement(sqlite_filename=sqlite_filename,
                              statement=statement)

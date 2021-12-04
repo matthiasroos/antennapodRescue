@@ -60,20 +60,19 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlalchemy.engine.r
     return feeds
 
 
-def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
+def create_fetch_feeds_statement(columns: typing.List[str]) -> sqlalchemy.sql.selectable.Select:
     """
-    Fetch all feeds from db and return them as a dataframe.
+    Create statement to fetch all feeds.
 
-    :param sqlite_filename: file name of the sqlite database file
-    :return: dataframe containing all feeds
+    :param columns: column names to be fetched
+    :return: select statement
     """
-    connection = get_connection(sqlite_filename=sqlite_filename)
-    statement = sqlalchemy.sql.select(src.orm.sqlalchemy.models.Feed)
-    feeds_df = src.database.fetch.fetch_all_df(
-        connection=connection,
-        statement=statement,
-        columns=['id', 'title', 'file_url', 'download_url', 'downloaded', 'feeditems'])
-    return feeds_df
+    specific_cols = [sqlalchemy.sql.column(col) for col in columns]
+    statement = sqlalchemy.sql.select(
+        from_obj=src.orm.sqlalchemy.models.Feed,
+        columns=specific_cols,
+    )
+    return statement
 
 
 def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlalchemy.engine.row.Row]:

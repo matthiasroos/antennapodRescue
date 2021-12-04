@@ -11,24 +11,6 @@ import src.database.fetch
 import src.orm.sqlalchemy.models
 
 
-def get_engine(sqlite_filename) -> sqlalchemy.engine.Engine:
-    """
-
-    :param sqlite_filename:
-    :return:
-    """
-    return sqlalchemy.create_engine(f'sqlite+pysqlite:///{sqlite_filename}')
-
-
-def get_connection(sqlite_filename: str) -> sqlalchemy.engine.Connection:
-    """
-
-    :param sqlite_filename:
-    :return:
-    """
-    return get_engine(sqlite_filename=sqlite_filename).connect()
-
-
 def fetch_all(sqlite_filename: str,
               statement: sqlalchemy.sql.selectable.Select) -> typing.List[sqlalchemy.engine.row.Row]:
     """

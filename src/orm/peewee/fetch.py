@@ -3,8 +3,8 @@ import typing
 import pandas as pd
 import peewee
 
-import database.fetch
-import peewee_.models
+import src.database.fetch
+import src.orm.peewee.models
 
 
 def get_connection(sqlite_filename: str):
@@ -38,20 +38,19 @@ def fetch_all_df(sqlite_filename: str,
     return data_df
 
 
-def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
+def create_fetch_feeds_statement(columns: typing.List[str]):
     """
     Fetch all feeds from db and return them as a dataframe.
 
-    :param sqlite_filename: file name of the sqlite database file
-    :return: dataframe containing all feeds
+    :param columns:
+    :return:
     """
-    connection = get_connection(sqlite_filename=sqlite_filename)
-    statement = peewee_.models.Feed.select()
-    feeds_df = database.fetch.fetch_all_df(
-        connection=connection,
-        statement=statement,
-        columns=['id', 'title', 'file_url', 'download_url', 'downloaded', 'feeditems'])
-    return feeds_df
+    if columns:
+        specific_cols = [src.orm.peewee.models.Feed. for col in columns]
+        query = src.orm.peewee.models.Feed.select(specific_cols)
+    else:
+        query = src.orm.peewee.models.Feed.select()
+    return query
 
 
 def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.Iterable[str] = None) -> pd.DataFrame:

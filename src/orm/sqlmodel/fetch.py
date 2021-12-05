@@ -59,21 +59,15 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[src.orm.sqlmodel.mo
     return feeds
 
 
-def fetch_feeds_df_from_db(sqlite_filename: str) -> pd.DataFrame:
+def create_fetch_feeds_statement(columns: typing.List[str]) -> pd.DataFrame:
     """
     Fetch all feeds from db and return them as a dataframe.
 
-    :param sqlite_filename: file name of the sqlite database file
+    :param columns:
     :return: dataframe containing all feeds
     """
-    statement = src.orm.sqlmodel.models.Feed().fetch_feeds()
-    columns = ['id', 'title', 'file_url', 'download_url', 'downloaded']
-
-    feeds_df = fetch_all_df(
-        sqlite_filename=sqlite_filename,
-        statement=statement,
-        columns=columns)
-    return feeds_df
+    statement = src.orm.sqlmodel.models.Feed().fetch_feeds(columns=columns)
+    return statement
 
 
 def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> src.orm.sqlmodel.models.Feed:

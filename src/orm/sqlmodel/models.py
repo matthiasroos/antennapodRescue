@@ -1,6 +1,7 @@
 
 import typing
 
+import sqlalchemy.sql
 import sqlmodel
 import sqlmodel.sql.expression
 
@@ -17,14 +18,22 @@ class Feed(sqlmodel.SQLModel, table=True):
     downloaded: int
 
     @classmethod
-    def fetch_feeds(cls) -> typing.Union[sqlmodel.sql.expression.Select,
-                                         sqlmodel.sql.expression.SelectOfScalar]:
+    def fetch_feeds(cls, columns: typing.List[str] = None) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                                           sqlmodel.sql.expression.SelectOfScalar]:
         """
         Return SQL expression to fetch all feeds.
 
         :return: sql expression
         """
-        return sqlmodel.select(Feed)
+        if columns:
+            specific_cols = [sqlalchemy.sql.column(col) for col in columns]
+            statement = sqlmodel.select(
+                from_obj=Feed,
+                columns=specific_cols,
+            ) # noqa
+        else:
+            statement = sqlmodel.select(Feed)
+        return statement
 
     @classmethod
     def fetch_single_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,

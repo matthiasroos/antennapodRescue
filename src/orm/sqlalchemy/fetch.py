@@ -89,24 +89,21 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[s
     return episodes
 
 
-def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.Iterable[str] = None) -> pd.DataFrame:
+def create_fetch_feeditems_statement(columns: typing.List[str],
+                                     feed_id: int) -> sqlalchemy.sql.selectable.Select:
     """
-    Fetch all episodes for a feed from db and return them as a sorted dataframe.
+     Create statement to fetch all feeditems for a feed.
 
-    :param sqlite_filename: file name of the sqlite database file
+    :param columns:
     :param feed_id: id of the feed
-    :param sort_by: list of column names to sorted by
     :return: dataframe containing all episodes
     """
-    sort_by = [] if sort_by is None else list(sort_by)
-    statement = src.orm.sqlalchemy.models.FeedItem().where(src.orm.sqlalchemy.models.FeedItem.feed == feed_id)
-    columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
-
-    episodes_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                               statement=statement,
-                               columns=columns)
-    episodes_df = episodes_df.sort_values(by=sort_by)
-    return episodes_df
+    specific_cols = [sqlalchemy.sql.column(col) for col in columns]
+    statement = sqlalchemy.sql.select(
+        from_obj=src.orm.sqlalchemy.models.FeedItem,
+        columns=specific_cols,
+    ).where(src.orm.sqlalchemy.models.FeedItem.feed == feed_id)
+    return statement
 
 
 def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:

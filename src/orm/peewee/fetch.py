@@ -46,8 +46,8 @@ def create_fetch_feeds_statement(columns: typing.List[str]):
     :return:
     """
     if columns:
-        specific_cols = [src.orm.peewee.models.Feed. for col in columns]
-        query = src.orm.peewee.models.Feed.select(specific_cols)
+        specific_cols = [getattr(src.orm.peewee.models.Feed, col) for col in columns]
+        query = src.orm.peewee.models.Feed.select(*specific_cols)
     else:
         query = src.orm.peewee.models.Feed.select()
     return query

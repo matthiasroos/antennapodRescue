@@ -60,9 +60,10 @@ def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[src.orm.sqlmodel.mo
     return feeds
 
 
-def create_fetch_feeds_statement(columns: typing.List[str]) -> pd.DataFrame:
+def create_fetch_feeds_statement(columns: typing.List[str]) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                                            sqlmodel.sql.expression.SelectOfScalar]:
     """
-    Fetch all feeds from db and return them as a dataframe.
+    Create statement to fetch all feeds.
 
     :param columns:
     :return: dataframe containing all feeds
@@ -86,18 +87,19 @@ def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> src.orm.sql
     return feed
 
 
-def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[src.orm.sqlmodel.models.FeedItem]:
+def create_fetch_feeditems_statement(columns: typing.List[str],
+                                     feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                                   sqlmodel.sql.expression.SelectOfScalar]:
     """
-    Fetch all feeditems for a feed from db and return them as a list of FeedItem objects.
+    Create statement to fetch all feeditems for a feed.
 
-    :param sqlite_filename: file name of the sqlite database file
+    :param columns:
     :param feed_id: id of the feed
-    :return: list of feeditems as FeedItem objects.
+    :return:
     """
-    statement = src.orm.sqlmodel.models.FeedItem.find_items_for_feed(feed_id=feed_id)
-    episodes = fetch_all(sqlite_filename=sqlite_filename,
-                         statement=statement)
-    return episodes
+    statement = src.orm.sqlmodel.models.FeedItem.fetch_feeditems_for_feed(feed_id=feed_id,
+                                                                          columns=columns)
+    return statement
 
 
 def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.Iterable[str] = None) -> pd.DataFrame:

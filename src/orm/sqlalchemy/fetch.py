@@ -93,11 +93,11 @@ def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[s
 def create_fetch_feeditems_statement(columns: typing.List[str],
                                      feed_id: int) -> sqlalchemy.sql.selectable.Select:
     """
-     Create statement to fetch all feeditems for a feed.
+    Create statement to fetch all feeditems for a feed.
 
     :param columns:
     :param feed_id: id of the feed
-    :return: dataframe containing all episodes
+    :return:
     """
     specific_cols = [sqlalchemy.sql.column(col) for col in columns]
     statement = sqlalchemy.sql.select(

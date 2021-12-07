@@ -23,6 +23,7 @@ class Feed(sqlmodel.SQLModel, table=True):
         """
         Return SQL expression to fetch all feeds.
 
+        :param columns:
         :return: sql expression
         """
         if columns:
@@ -63,15 +64,26 @@ class FeedItem(sqlmodel.SQLModel, table=True):
     image_url: str
 
     @classmethod
-    def find_items_for_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
-                                                               sqlmodel.sql.expression.SelectOfScalar]:
+    def fetch_feeditems_for_feed(cls,
+                                 feed_id: int,
+                                 columns: typing.List[str] = None) \
+            -> typing.Union[sqlmodel.sql.expression.Select, sqlmodel.sql.expression.SelectOfScalar]:
         """
         Return SQL expression to fetch all items of a feed.
 
         :param feed_id: id of the feed
+        :param columns:
         :return: sql expression
         """
-        return sqlmodel.select(FeedItem).where(FeedItem.feed == feed_id)
+        if columns:
+            specific_cols = [sqlalchemy.sql.column(col) for col in columns]
+            statement = sqlmodel.select(
+                from_obj=FeedItem,
+                columns=specific_cols,
+            ).where(FeedItem.feed == feed_id)  # noqa
+        else:
+            statement = sqlmodel.select(Feed).where(FeedItem.feed == feed_id)
+        return statement
 
     @classmethod
     def delete_feed_item(cls, feed_item_id: int):

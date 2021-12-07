@@ -8,6 +8,7 @@ import sqlalchemy.orm
 import sqlalchemy.sql.selectable
 
 import src.database.fetch
+import src.orm.sqlalchemy.database
 import src.orm.sqlalchemy.models
 
 
@@ -21,7 +22,7 @@ def fetch_all(sqlite_filename: str,
     :param statement: SQL query to be executed
     :return:
     """
-    with sqlalchemy.orm.Session(get_engine(sqlite_filename=sqlite_filename)) as session:
+    with sqlalchemy.orm.Session(src.orm.sqlalchemy.database.get_engine(sqlite_filename=sqlite_filename)) as session:
         data = session.execute(statement).all()
     return data
 
@@ -38,7 +39,7 @@ def fetch_all_df(sqlite_filename: str,
     :param columns: list of column names
     :return: dataframe containing all data
     """
-    con = get_connection(sqlite_filename=sqlite_filename)
+    con = src.orm.sqlalchemy.database.get_connection(sqlite_filename=sqlite_filename)
     data_df = pd.read_sql(
         sql=statement,
         con=con,

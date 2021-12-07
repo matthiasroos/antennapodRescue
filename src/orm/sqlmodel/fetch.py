@@ -5,6 +5,7 @@ import sqlmodel
 import sqlmodel.sql.expression
 
 import src.database.fetch
+import src.orm.sqlmodel.database
 import src.orm.sqlmodel.models
 
 
@@ -19,7 +20,7 @@ def fetch_all(sqlite_filename: str,
     :param statement: SQL query to be executed
     :return:
     """
-    engine = get_engine(sqlite_filename=sqlite_filename)
+    engine = src.orm.sqlmodel.database.get_engine(sqlite_filename=sqlite_filename)
     with sqlmodel.Session(engine) as session:
         data = session.exec(statement).all()
     return data
@@ -37,7 +38,7 @@ def fetch_all_df(sqlite_filename: str,
     :param columns: list of column names
     :return: dataframe containing all data
     """
-    connection = get_connection(sqlite_filename=sqlite_filename)
+    connection = src.orm.sqlmodel.database.get_connection(sqlite_filename=sqlite_filename)
 
     data_df = src.database.fetch.fetch_all_df(
         connection=connection,
@@ -78,7 +79,7 @@ def fetch_single_feed_from_db(sqlite_filename: str, feed_id: int) -> src.orm.sql
     :param feed_id: id of the feed
     :return: feed data as Feed object
     """
-    engine = get_engine(sqlite_filename=sqlite_filename)
+    engine = src.orm.sqlmodel.database.get_engine(sqlite_filename=sqlite_filename)
     with sqlmodel.Session(engine) as session:
         statement = src.orm.sqlmodel.models.Feed().fetch_single_feed(feed_id=feed_id)
         feed = session.exec(statement).one()

@@ -1,6 +1,7 @@
 import typing
 
 import src.orm.peewee.fetch
+import src.orm.pypika.fetch
 import src.orm.sqlalchemy.fetch
 import src.orm.sqlmodel.fetch
 
@@ -21,5 +22,11 @@ def create_fetch_feeditems_statement(orm_model: str,
     if orm_model == 'sqlalchemy':
         statement = src.orm.sqlalchemy.fetch.create_fetch_feeditems_statement(columns=columns_,
                                                                               feed_id=feed_id)
+    elif orm_model == 'sqlmodel':
+        statement = src.orm.sqlmodel.fetch.create_fetch_feeditems_statement(columns=columns_,
+                                                                            feed_id=feed_id)
+    elif orm_model == 'pypika':
+        statement = src.orm.pypika.fetch.create_fetch_feeditems_statement(columns=columns_,
+                                                                          feed_id=feed_id)
 
     return statement, columns_

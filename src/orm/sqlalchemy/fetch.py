@@ -107,19 +107,20 @@ def create_fetch_feeditems_statement(columns: typing.List[str],
     return statement
 
 
-def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
+def create_fetch_media_statement(columns: typing.List[str],
+                                 feed_id: int) -> sqlalchemy.sql.selectable.Select:
     """
     Fetch all media for a feed from db and return them as a dataframe.
 
-    :param sqlite_filename: file name of the sqlite database file
+    :param columns:
     :param feed_id: id of the feed
     :return: dataframe containing all media
     """
-    statement = sqlalchemy.sql.select(src.orm.sqlalchemy.models.FeedMedia) \
-        .filter(src.orm.sqlalchemy.models.FeedMedia.feeditem == src.orm.sqlalchemy.models.FeedItem.id)\
+    specific_cols = [sqlalchemy.sql.column(col) if col != 'id' else src.orm.sqlalchemy.models.FeedMedia.id
+                     for col in columns]
+    statement = sqlalchemy.sql.select(
+        from_obj=src.orm.sqlalchemy.models.FeedMedia,
+        columns=specific_cols,
+    ).filter(src.orm.sqlalchemy.models.FeedMedia.feeditem == src.orm.sqlalchemy.models.FeedItem.id)\
         .where(src.orm.sqlalchemy.models.FeedItem.feed == feed_id)
-    columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
-    media_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                            statement=statement,
-                            columns=columns)
-    return media_df
+    return statement

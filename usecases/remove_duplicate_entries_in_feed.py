@@ -32,7 +32,7 @@ import typing
 
 import pandas as pd
 
-import aiosql_.database
+import src.orm.aiosql.database
 
 
 def identify_duplicate_feeditems(feed_items_df: pd.DataFrame) -> pd.DataFrame:
@@ -134,19 +134,19 @@ if __name__ == '__main__':
     file_name = '<to be specified>'
     feed_number = 2  # needs to be changed accordingly
 
-    connection = aiosql_.database.get_connection(file_name=file_name)
+    connection = src.orm.aiosql.database.get_connection(file_name=file_name)
 
-    feed_items = aiosql_.database.fetch_items_for_feed(connection=connection, feed_number=feed_number)
+    feed_items = src.orm.aiosql.database.fetch_items_for_feed(connection=connection, feed_number=feed_number)
     duplicate_items = identify_duplicate_feeditems(feed_items_df=feed_items)
     items_to_update, items_to_delete = consolidate_feeditems(duplicate_items_df=duplicate_items)
 
-    media = aiosql_.database.fetch_media_for_feed(connection=connection, feed_number=feed_number)
+    media = src.orm.aiosql.database.fetch_media_for_feed(connection=connection, feed_number=feed_number)
     duplicate_media = identify_duplicate_media(media_df=media)
     media_to_update, media_to_delete = consolidate_media(duplicate_media_df=duplicate_media)
 
-    aiosql_.database.write_feeditems_and_media_to_db(connection=connection,
-                                                     items_to_update_df=items_to_update,
-                                                     items_to_delete=items_to_delete,
-                                                     media_to_update_df=media_to_update,
-                                                     media_to_delete=media_to_delete)
+    src.orm.aiosql.database.write_feeditems_and_media_to_db(connection=connection,
+                                                            items_to_update_df=items_to_update,
+                                                            items_to_delete=items_to_delete,
+                                                            media_to_update_df=media_to_update,
+                                                            media_to_delete=media_to_delete)
     connection.close()

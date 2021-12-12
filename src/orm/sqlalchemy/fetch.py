@@ -27,27 +27,6 @@ def fetch_all(sqlite_filename: str,
     return data
 
 
-def fetch_all_df(sqlite_filename: str,
-                 statement: sqlalchemy.sql.selectable.Select,
-                 columns: typing.List[str]) -> pd.DataFrame:
-    """
-    Base method.
-    Fetch all rows of a table from db and return a dataframe.
-
-    :param sqlite_filename: file name of the sqlite database file
-    :param statement: SQL query to be executed
-    :param columns: list of column names
-    :return: dataframe containing all data
-    """
-    con = src.orm.sqlalchemy.database.get_connection(sqlite_filename=sqlite_filename)
-    data_df = pd.read_sql(
-        sql=statement,
-        con=con,
-        columns=columns)
-    con.close()
-    return data_df
-
-
 def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlalchemy.engine.row.Row]:
     """
     Fetch feeds from db and return them as a list of SQLAlchemy Row objects.

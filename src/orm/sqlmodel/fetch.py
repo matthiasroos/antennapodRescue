@@ -26,27 +26,6 @@ def fetch_all(sqlite_filename: str,
     return data
 
 
-def fetch_all_df(sqlite_filename: str,
-                 statement: typing.Union[sqlmodel.sql.expression.Select, sqlmodel.sql.expression.SelectOfScalar],
-                 columns: typing.List[str]) -> pd.DataFrame:
-    """
-    Base method.
-    Fetch all rows of a table from db and return a dataframe.
-
-    :param sqlite_filename: file name of the sqlite database file
-    :param statement: SQL query to be executed
-    :param columns: list of column names
-    :return: dataframe containing all data
-    """
-    connection = src.orm.sqlmodel.database.get_connection(sqlite_filename=sqlite_filename)
-
-    data_df = src.database.fetch.fetch_all_df(
-        connection=connection,
-        statement=statement,
-        columns=columns)
-    return data_df
-
-
 def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[src.orm.sqlmodel.models.Feed]:
     """
     Fetch all feeds from db and return them as a list of Feed objects.
@@ -100,26 +79,6 @@ def create_fetch_feeditems_statement(columns: typing.List[str],
     statement = src.orm.sqlmodel.models.FeedItem.fetch_feeditems_for_feed(feed_id=feed_id,
                                                                           columns=columns)
     return statement
-
-
-def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.Iterable[str] = None) -> pd.DataFrame:
-    """
-    Fetch all episodes for a feed from db and return them as a dataframe.
-
-    :param sqlite_filename: file name of the sqlite database file
-    :param feed_id: id of the feed
-    :param sort_by: list of column names to sorted by
-    :return: dataframe containing all episodes
-    """
-    sort_by = [] if sort_by is None else list(sort_by)
-    statement = src.orm.sqlmodel.models.FeedItem.find_items_for_feed(feed_id=feed_id)
-    columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
-
-    episodes_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                               statement=statement,
-                               columns=columns)
-    episodes_df = episodes_df.sort_values(by=sort_by)
-    return episodes_df
 
 
 def fetch_media_from_db(sqlite_filename: str, feed_id: int) -> typing.List[src.orm.sqlmodel.models.FeedMedia]:

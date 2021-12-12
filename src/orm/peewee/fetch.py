@@ -7,15 +7,6 @@ import src.database.fetch
 import src.orm.peewee.models
 
 
-def get_connection(sqlite_filename: str):
-    """
-
-    :param sqlite_filename:
-    :return:
-    """
-    return peewee.SqliteDatabase(sqlite_filename).connection()
-
-
 def fetch_all_df(sqlite_filename: str,
                  statement: peewee.ModelSelect,
                  columns: typing.List[str]) -> pd.DataFrame:

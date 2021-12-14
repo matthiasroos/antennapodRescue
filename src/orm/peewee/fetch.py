@@ -7,28 +7,6 @@ import src.database.fetch
 import src.orm.peewee.models
 
 
-def fetch_all_df(sqlite_filename: str,
-                 statement: peewee.ModelSelect,
-                 columns: typing.List[str]) -> pd.DataFrame:
-    """
-    Base method.
-    Fetch all rows of a table from db and return a dataframe.
-
-    :param sqlite_filename: file name of the sqlite database file
-    :param statement: peewee SQL statement
-    :param columns: list of column names
-    :return: dataframe containing all data
-    """
-    connection = peewee.SqliteDatabase(sqlite_filename).connection()
-    sql, params = statement.sql()
-    data_df = pd.read_sql(
-        sql=sql,
-        con=connection,
-        params=params,
-        columns=columns)
-    return data_df
-
-
 def create_fetch_feeds_statement(columns: typing.List[str]):
     """
     Fetch all feeds from db and return them as a dataframe.

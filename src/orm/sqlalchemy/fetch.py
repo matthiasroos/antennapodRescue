@@ -12,34 +12,6 @@ import src.orm.sqlalchemy.database
 import src.orm.sqlalchemy.models
 
 
-def fetch_all(sqlite_filename: str,
-              statement: sqlalchemy.sql.selectable.Select) -> typing.List[sqlalchemy.engine.row.Row]:
-    """
-    Base method.
-    Fetch all rows of a table from db and return a list of SQLAlchemy Row objects.
-
-    :param sqlite_filename: file name of the sqlite database file
-    :param statement: SQL query to be executed
-    :return:
-    """
-    with sqlalchemy.orm.Session(src.orm.sqlalchemy.database.get_engine(sqlite_filename=sqlite_filename)) as session:
-        data = session.execute(statement).all()
-    return data
-
-
-def fetch_feeds_from_db(sqlite_filename: str) -> typing.List[sqlalchemy.engine.row.Row]:
-    """
-    Fetch feeds from db and return them as a list of SQLAlchemy Row objects.
-
-    :param sqlite_filename: file name of the sqlite database file
-    :return: list of all feeds as sqlalchemy.engine.row.Row
-    """
-    statement = sqlalchemy.sql.select(src.orm.sqlalchemy.models.Feed)
-    feeds = fetch_all(sqlite_filename=sqlite_filename,
-                      statement=statement)
-    return feeds
-
-
 def create_fetch_feeds_statement(columns: typing.List[str]) -> sqlalchemy.sql.selectable.Select:
     """
     Create statement to fetch all feeds.
@@ -53,20 +25,6 @@ def create_fetch_feeds_statement(columns: typing.List[str]) -> sqlalchemy.sql.se
         columns=specific_cols,
     )
     return statement
-
-
-def fetch_feeditems_from_db(sqlite_filename: str, feed_id: int) -> typing.List[sqlalchemy.engine.row.Row]:
-    """
-    Fetch all feeditems for a feed from db and return them as a list of SQLAlchemy Row objects.
-
-    :param sqlite_filename: file name of the sqlite database file
-    :param feed_id: id of the feed
-    :return: list of all feeditems for a feed as sqlalchemy.engine.row.Row
-    """
-    statement = src.orm.sqlalchemy.models.FeedItem().where(src.orm.sqlalchemy.models.FeedItem.feed == feed_id)
-    episodes = fetch_all(sqlite_filename=sqlite_filename,
-                         statement=statement)
-    return episodes
 
 
 def create_fetch_feeditems_statement(columns: typing.List[str],

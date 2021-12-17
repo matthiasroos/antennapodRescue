@@ -22,5 +22,11 @@ def create_fetch_media_statement(orm_model: str,
     if orm_model == 'sqlalchemy':
         statement = src.orm.sqlalchemy.fetch.create_fetch_media_statement(columns=columns_,
                                                                           feed_id=feed_id)
+    elif orm_model == 'sqlmodel':
+        statement = src.orm.sqlmodel.fetch.create_fetch_media_statement(columns=columns_,
+                                                                        feed_id=feed_id)
+    elif orm_model == 'peewee':
+        statement = src.orm.peewee.fetch.create_fetch_media_statement(columns=columns_,
+                                                                      feed_id=feed_id)
 
     return statement, columns_

@@ -31,6 +31,9 @@ def create_fetch_feeditems_statement(orm_model: str,
     elif orm_model == 'pypika':
         statement = src.orm.pypika.fetch.create_fetch_feeditems_statement(columns=columns_,
                                                                           feed_id=feed_id)
+    elif orm_model == 'peewee':
+        statement = src.orm.peewee.fetch.create_fetch_feeditems_statement(columns=columns_,
+                                                                          feed_id=feed_id)
 
     return statement, columns_
 

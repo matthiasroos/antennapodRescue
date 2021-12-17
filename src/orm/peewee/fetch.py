@@ -1,15 +1,11 @@
 import typing
 
-import pandas as pd
-import peewee
-
-import src.database.fetch
 import src.orm.peewee.models
 
 
 def create_fetch_feeds_statement(columns: typing.List[str]):
     """
-    Fetch all feeds from db and return them as a dataframe.
+    Create statement to fetch all feeds.
 
     :param columns:
     :return:
@@ -22,39 +18,43 @@ def create_fetch_feeds_statement(columns: typing.List[str]):
     return query
 
 
-def fetch_episodes_df_from_db(sqlite_filename: str, feed_id: int, sort_by: typing.Iterable[str] = None) -> pd.DataFrame:
+def create_fetch_feeditems_statement(columns: typing.List[str],
+                                     feed_id: int):
     """
-    Fetch all episodes for a feed from db and return them as a sorted dataframe.
+    Create statement to fetch all feeditems for a feed.
 
-    :param sqlite_filename: file name of the sqlite database file
+    :param columns:
     :param feed_id: id of the feed
-    :param sort_by: list of column names to sorted by
-    :return: dataframe containing all episodes
+    :return:
     """
-    sort_by = [] if sort_by is None else list(sort_by)
-    statement = peewee_.models.FeedItem.select().where(peewee_.models.FeedItem.feed == feed_id)
-    columns = ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
-    print(statement.sql())
-    episodes_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                               statement=statement,
-                               columns=columns)
-    episodes_df = episodes_df.sort_values(by=sort_by)
-    return episodes_df
+    if columns:
+        specific_cols = [getattr(src.orm.peewee.models.FeedItem, col) for col in columns]
+        query = src.orm.peewee.models.FeedItem.select(*specific_cols)\
+            .where(src.orm.peewee.models.FeedItem.feed == feed_id)
+    else:
+        query = src.orm.peewee.models.FeedItem.select()\
+            .where(src.orm.peewee.models.FeedItem.feed == feed_id)
+    return query
 
 
-def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
+def create_fetch_media_statement(columns: typing.List[str],
+                                 feed_id: int):
     """
     Fetch all media for a feed from db and return them as a dataframe.
 
-    :param sqlite_filename: file name of the sqlite database file
+    :param columns:
     :param feed_id: id of the feed
     :return: dataframe containing all media
     """
-    statement = peewee_.models.FeedMedia.select() \
-        .join(peewee_.models.FeedItem, on=(peewee_.models.FeedMedia.feeditem == peewee_.models.FeedItem.id))\
-        .where(peewee_.models.FeedItem.feed == feed_id)
-    columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
-    media_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                            statement=statement,
-                            columns=columns)
-    return media_df
+    if columns:
+        specific_cols = [getattr(src.orm.peewee.models.FeedMedia, col) for col in columns]
+        query = src.orm.peewee.models.FeedMedia.select(*specific_cols) \
+            .join(src.orm.peewee.models.FeedItem,
+                  on=(src.orm.peewee.models.FeedMedia.feeditem == src.orm.peewee.models.FeedItem.id)) \
+            .where(src.orm.peewee.models.FeedItem.feed == feed_id)
+    else:
+        query = src.orm.peewee.models.FeedMedia.select() \
+            .join(src.orm.peewee.models.FeedItem,
+                  on=(src.orm.peewee.models.FeedMedia.feeditem == src.orm.peewee.models.FeedItem.id)) \
+            .where(src.orm.peewee.models.FeedItem.feed == feed_id)
+    return query

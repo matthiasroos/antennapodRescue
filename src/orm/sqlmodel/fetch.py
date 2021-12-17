@@ -1,10 +1,7 @@
 import typing
 
-import pandas as pd
-import sqlmodel
 import sqlmodel.sql.expression
 
-import src.database.fetch
 import src.orm.sqlmodel.database
 import src.orm.sqlmodel.models
 
@@ -36,18 +33,16 @@ def create_fetch_feeditems_statement(columns: typing.List[str],
     return statement
 
 
-def fetch_media_df_from_db(sqlite_filename: str, feed_id: int) -> pd.DataFrame:
+def create_fetch_media_statement(columns: typing.List[str],
+                                 feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                               sqlmodel.sql.expression.SelectOfScalar]:
     """
-    Fetch all media for a feed from db and return them as a dataframe.
+    Create statement to fetch all media for a feed.
 
-    :param sqlite_filename: file name of the sqlite database file
+    :param columns:
     :param feed_id: id of the feed
-    :return: dataframe containing all media
+    :return:
     """
-    statement = src.orm.sqlmodel.models.FeedMedia().find_media_for_feed(feed_id=feed_id)
-    columns = ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
-
-    media_df = fetch_all_df(sqlite_filename=sqlite_filename,
-                            statement=statement,
-                            columns=columns)
-    return media_df
+    statement = src.orm.sqlmodel.models.FeedMedia().fetch_media_for_feed(feed_id=feed_id,
+                                                                         columns=columns)
+    return statement

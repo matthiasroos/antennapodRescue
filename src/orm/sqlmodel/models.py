@@ -120,14 +120,26 @@ class FeedMedia(sqlmodel.SQLModel, table=True):
     last_played_time: int
 
     @classmethod
-    def find_media_for_feed(cls, feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
-                                                               sqlmodel.sql.expression.SelectOfScalar]:
+    def fetch_media_for_feed(cls,
+                             feed_id: int,
+                             columns: typing.List[str] = None) -> typing.Union[sqlmodel.sql.expression.Select,
+                                                                               sqlmodel.sql.expression.SelectOfScalar]:
         """
         Return SQL expression to fetch all media of a feed.
 
         :param feed_id: id of the feed
+        :param columns:
         :return: sql expression
         """
-        return sqlmodel.select(FeedMedia) \
-            .filter(FeedMedia.feeditem == FeedItem.id) \
-            .where(FeedItem.feed == feed_id)
+        if columns:
+            specific_cols = [sqlalchemy.sql.column(col) if col != 'id' else FeedMedia.id
+                             for col in columns]
+            statement = sqlmodel.select(
+                from_obj=FeedMedia,
+                columns=specific_cols,
+            ).filter(FeedMedia.feeditem == FeedItem.id).where(FeedItem.feed == feed_id)  # noqa
+        else:
+            statement = sqlmodel.select(FeedMedia) \
+                .filter(FeedMedia.feeditem == FeedItem.id) \
+                .where(FeedItem.feed == feed_id)
+        return statement

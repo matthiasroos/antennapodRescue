@@ -1,22 +1,22 @@
 import typing
 
-import pandas as pd
 import sqlalchemy
 import sqlalchemy.engine
 import sqlalchemy.engine.row
 import sqlalchemy.orm
 import sqlalchemy.sql.selectable
 
-import src.database.fetch
 import src.orm.sqlalchemy.database
 import src.orm.sqlalchemy.models
 
 
-def create_fetch_feeds_statement(columns: typing.List[str]) -> sqlalchemy.sql.selectable.Select:
+def create_fetch_feeds_statement(columns: typing.List[str],
+                                 where_cond: typing.Dict[str, typing.Any] = None) -> sqlalchemy.sql.selectable.Select:
     """
     Create statement to fetch all feeds.
 
     :param columns: column names to be fetched
+    :param where_cond:
     :return: select statement
     """
     specific_cols = [sqlalchemy.sql.column(col) for col in columns]
@@ -24,6 +24,16 @@ def create_fetch_feeds_statement(columns: typing.List[str]) -> sqlalchemy.sql.se
         from_obj=src.orm.sqlalchemy.models.Feed,
         columns=specific_cols,
     )
+    if where_cond:
+        expressions = []
+        for column, values in where_cond.items():
+            if isinstance(values, str):
+                expressions.append(getattr(src.orm.sqlalchemy.models.Feed, column) == values)
+            elif isinstance(values, list):
+                expressions.append(getattr(src.orm.sqlalchemy.models.Feed, column).in_(values))
+    else:
+        expressions = []
+    statement = statement.where(sqlalchemy.and_(True, *expressions))
     return statement
 
 
@@ -47,7 +57,7 @@ def create_fetch_feeditems_statement(columns: typing.List[str],
 def create_fetch_media_statement(columns: typing.List[str],
                                  feed_id: int) -> sqlalchemy.sql.selectable.Select:
     """
-    Fetch all media for a feed from db and return them as a dataframe.
+    Create statement to fetch all media for a feed.
 
     :param columns:
     :param feed_id: id of the feed

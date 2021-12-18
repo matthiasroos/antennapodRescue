@@ -16,7 +16,7 @@ def fetch_from_db(kind: str,
                   orm_model: str = 'sqlalchemy',
                   columns: typing.Optional[typing.List[str]] = None,
                   sort_by: typing.Iterable[str] = None,
-                  options: typing.Dict[str, typing.Any] = None,
+                  where_cond: typing.Dict[str, typing.Any] = None,
                   ) -> pd.DataFrame:
     """
 
@@ -25,7 +25,7 @@ def fetch_from_db(kind: str,
     :param orm_model: ORM model to be used , default: 'sql_alchemy'; other possibles values: ...
     :param columns:
     :param sort_by: list of column names to sorted by
-    :param options:
+    :param where_cond:
     :return:
     """
     sort_by = [] if sort_by is None else list(sort_by)
@@ -35,14 +35,15 @@ def fetch_from_db(kind: str,
 
     if kind == 'feeds':
         statement, columns_ = src.database.feeds.create_fetch_feeds_statement(orm_model=orm_model,
-                                                                              columns=columns)
+                                                                              columns=columns,
+                                                                              where_cond=where_cond)
     elif kind == 'feeditems':
         statement, columns_ = src.database.feeditems.create_fetch_feeditems_statement(orm_model=orm_model,
-                                                                                      feed_id=options['feed_id'],
+                                                                                      feed_id=where_cond['feed_id'],
                                                                                       columns=columns)
     elif kind == 'media':
         statement, columns_ = src.database.media.create_fetch_media_statement(orm_model=orm_model,
-                                                                              feed_id=options['feed_id'],
+                                                                              feed_id=where_cond['feed_id'],
                                                                               columns=columns)
     else:
         statement, columns_ = ...

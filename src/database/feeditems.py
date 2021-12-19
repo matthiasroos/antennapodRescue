@@ -24,7 +24,7 @@ def create_fetch_feeditems_statement(orm_model: str,
         ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
     if orm_model == 'sqlalchemy':
         statement = src.orm.sqlalchemy.fetch.create_fetch_feeditems_statement(columns=columns_,
-                                                                              feed_id=feed_id)
+                                                                              where_cond={'feed': feed_id})
     elif orm_model == 'sqlmodel':
         statement = src.orm.sqlmodel.fetch.create_fetch_feeditems_statement(columns=columns_,
                                                                             feed_id=feed_id)

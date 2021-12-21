@@ -18,12 +18,16 @@ class Feed(sqlmodel.SQLModel, table=True):
     downloaded: int
 
     @classmethod
-    def fetch_feeds(cls, columns: typing.List[str] = None) -> typing.Union[sqlmodel.sql.expression.Select,
-                                                                           sqlmodel.sql.expression.SelectOfScalar]:
+    def fetch_feeds(cls,
+                    columns: typing.List[str] = None,
+                    where_cond: typing.Dict[str, typing.Any] = None) \
+            -> typing.Union[sqlmodel.sql.expression.Select,
+                            sqlmodel.sql.expression.SelectOfScalar]:
         """
         Return SQL expression to fetch all feeds.
 
         :param columns:
+        :param where_cond:
         :return: sql expression
         """
         if columns:
@@ -34,6 +38,16 @@ class Feed(sqlmodel.SQLModel, table=True):
             ) # noqa
         else:
             statement = sqlmodel.select(Feed)
+        if where_cond:
+            expressions = []
+            for column, values in where_cond.items():
+                if isinstance(values, str) or isinstance(values, int):
+                    expressions.append(getattr(Feed, column) == values)
+                elif isinstance(values, list):
+                    expressions.append(getattr(Feed, column).in_(values))
+        else:
+            expressions = []
+        statement = statement.where(sqlmodel.and_(True, *expressions))
         return statement
 
     @classmethod

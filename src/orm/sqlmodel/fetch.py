@@ -6,15 +6,19 @@ import src.orm.sqlmodel.database
 import src.orm.sqlmodel.models
 
 
-def create_fetch_feeds_statement(columns: typing.List[str]) -> typing.Union[sqlmodel.sql.expression.Select,
-                                                                            sqlmodel.sql.expression.SelectOfScalar]:
+def create_fetch_feeds_statement(columns: typing.List[str],
+                                 where_cond: typing.Dict[str, typing.Any] = None) \
+        -> typing.Union[sqlmodel.sql.expression.Select,
+                        sqlmodel.sql.expression.SelectOfScalar]:
     """
     Create statement to fetch all feeds.
 
     :param columns:
-    :return: dataframe containing all feeds
+    :param where_cond:
+    :return:
     """
-    statement = src.orm.sqlmodel.models.Feed().fetch_feeds(columns=columns)
+    statement = src.orm.sqlmodel.models.Feed().fetch_feeds(columns=columns,
+                                                           where_cond=where_cond)
     return statement
 
 

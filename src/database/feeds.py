@@ -23,7 +23,8 @@ def create_fetch_feeds_statement(orm_model: str,
         statement = src.orm.sqlalchemy.fetch.create_fetch_feeds_statement(columns=columns_,
                                                                           where_cond=where_cond)
     elif orm_model == 'sqlmodel':
-        statement = src.orm.sqlmodel.fetch.create_fetch_feeds_statement(columns=columns_)
+        statement = src.orm.sqlmodel.fetch.create_fetch_feeds_statement(columns=columns_,
+                                                                        where_cond=where_cond)
     elif orm_model == 'pypika':
         statement = src.orm.pypika.fetch.create_fetch_feeds_statement(columns=columns_,
                                                                       where_cond=where_cond)

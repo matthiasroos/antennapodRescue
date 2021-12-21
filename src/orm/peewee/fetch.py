@@ -3,11 +3,13 @@ import typing
 import src.orm.peewee.models
 
 
-def create_fetch_feeds_statement(columns: typing.List[str]):
+def create_fetch_feeds_statement(columns: typing.List[str],
+                                 where_cond: typing.Dict[str, typing.Any] = None):
     """
     Create statement to fetch all feeds.
 
     :param columns:
+    :param where_cond:
     :return:
     """
     if columns:
@@ -15,6 +17,16 @@ def create_fetch_feeds_statement(columns: typing.List[str]):
         query = src.orm.peewee.models.Feed.select(*specific_cols)
     else:
         query = src.orm.peewee.models.Feed.select()
+    if where_cond:
+        expressions = []
+        for column, values in where_cond.items():
+            if isinstance(values, str) or isinstance(values, int):
+                expressions.append(getattr(src.orm.peewee.models.Feed, column) == values)
+            elif isinstance(values, list):
+                expressions.append(getattr(src.orm.peewee.models.Feed, column).in_(values))
+    else:
+        expressions = []
+    query = query.where(True, *expressions)
     return query
 
 

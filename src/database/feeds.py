@@ -29,6 +29,7 @@ def create_fetch_feeds_statement(orm_model: str,
         statement = src.orm.pypika.fetch.create_fetch_feeds_statement(columns=columns_,
                                                                       where_cond=where_cond)
     elif orm_model == 'peewee':
-        statement = src.orm.peewee.fetch.create_fetch_feeds_statement(columns=columns_)
+        statement = src.orm.peewee.fetch.create_fetch_feeds_statement(columns=columns_,
+                                                                      where_cond=where_cond)
 
     return statement, columns_

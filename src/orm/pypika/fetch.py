@@ -3,6 +3,29 @@ import typing
 import pypika
 
 
+def create_fetch_feeds_statement(columns: typing.List[str],
+                                 where_cond: typing.Dict[str, typing.Any] = None):
+    """
+
+    :param columns:
+    :param where_cond:
+    :return:
+    """
+    feeds = pypika.Table('Feeds')
+    specific_cols = [getattr(feeds, col) for col in columns]
+    query = pypika.Query.from_(feeds) \
+        .select(*specific_cols)
+    if where_cond:
+        expressions = []
+        for column, values in where_cond.items():
+            if isinstance(values, str) or isinstance(values, int):
+                expressions.append(getattr(feeds, column) == values)
+            elif isinstance(values, list):
+                expressions.append(getattr(feeds, column).isin(values))
+        query = query.where(*expressions)
+    return query
+
+
 def create_fetch_feeditems_statement(columns: typing.List[str],
                                      feed_id: int):
     """

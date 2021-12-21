@@ -2,6 +2,7 @@
 import typing
 
 import src.orm.peewee.fetch
+import src.orm.pypika.fetch
 import src.orm.sqlalchemy.fetch
 import src.orm.sqlmodel.fetch
 
@@ -23,6 +24,9 @@ def create_fetch_feeds_statement(orm_model: str,
                                                                           where_cond=where_cond)
     elif orm_model == 'sqlmodel':
         statement = src.orm.sqlmodel.fetch.create_fetch_feeds_statement(columns=columns_)
+    elif orm_model == 'pypika':
+        statement = src.orm.pypika.fetch.create_fetch_feeds_statement(columns=columns_,
+                                                                      where_cond=where_cond)
     elif orm_model == 'peewee':
         statement = src.orm.peewee.fetch.create_fetch_feeds_statement(columns=columns_)
 

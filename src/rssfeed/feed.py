@@ -1,4 +1,3 @@
-import datetime
 import functools
 import typing
 import xml.etree.ElementTree as ET
@@ -6,7 +5,7 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import requests
 
-import utils
+import src.utils
 
 
 @functools.lru_cache(None)
@@ -36,9 +35,9 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
     episode_list = []
     for ep in root.iter(tag='item'):
 
-        datetime_entry = utils.parse_pubdate(element=ep)
+        datetime_entry = src.utils.parse_pubdate(element=ep)
 
-        item = [ep.find('title').text, int(datetime_entry), 0, ep.find('description'), ep.find('guid').text]
+        item = [ep.find('title').text, int(datetime_entry), 0, ep.find('description').text, ep.find('guid').text]
         episode_list.append(item)
     return pd.DataFrame(episode_list,
                         columns=['title', 'pubDate', 'read', 'description', 'item_identifier'])

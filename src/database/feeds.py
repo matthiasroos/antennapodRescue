@@ -9,7 +9,8 @@ import src.orm.sqlmodel.fetch
 
 def create_fetch_feeds_statement(orm_model: str,
                                  columns: typing.Optional[typing.List[str]] = None,
-                                 where_cond: typing.Dict[str, typing.Any] = None) -> typing.Tuple:
+                                 where_cond: typing.Dict[str, typing.Any] = None) \
+        -> typing.Tuple[typing.Optional[typing.Any], typing.List[str]]:
     """
 
 
@@ -31,5 +32,7 @@ def create_fetch_feeds_statement(orm_model: str,
     elif orm_model == 'peewee':
         statement = src.orm.peewee.fetch.create_fetch_feeds_statement(columns=columns_,
                                                                       where_cond=where_cond)
+    else:
+        statement = None
 
     return statement, columns_

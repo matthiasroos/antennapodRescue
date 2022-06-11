@@ -8,7 +8,8 @@ import src.orm.sqlmodel.fetch
 
 def create_fetch_media_statement(orm_model: str,
                                  feed_id: int,
-                                 columns: typing.Optional[typing.List[str]] = None):
+                                 columns: typing.Optional[typing.List[str]] = None) \
+        -> typing.Tuple[typing.Optional[typing.Any], typing.List[str]]:
     """
 
 
@@ -28,5 +29,7 @@ def create_fetch_media_statement(orm_model: str,
     elif orm_model == 'peewee':
         statement = src.orm.peewee.fetch.create_fetch_media_statement(columns=columns_,
                                                                       feed_id=feed_id)
+    else:
+        statement = None
 
     return statement, columns_

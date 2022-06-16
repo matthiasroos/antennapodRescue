@@ -9,6 +9,14 @@ import src.orm.sqlalchemy.update
 import src.orm.sqlmodel.fetch
 
 
+def get_feeditems_standard_columns() -> typing.List[str]:
+    """
+
+    :return:
+    """
+    return ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
+
+
 def create_fetch_feeditems_statement(orm_model: str,
                                      feed_id: int,
                                      columns: typing.Optional[typing.List[str]] = None) \
@@ -21,8 +29,7 @@ def create_fetch_feeditems_statement(orm_model: str,
     :param columns:
     :return:
     """
-    columns_ = columns if columns else \
-        ['id', 'title', 'pubDate', 'read', 'description', 'link', 'feed', 'item_identifier', 'image_url']
+    columns_ = columns if columns else get_feeditems_standard_columns()
     if orm_model == 'sqlalchemy':
         statement = src.orm.sqlalchemy.fetch.create_fetch_feeditems_statement(columns=columns_,
                                                                               where_cond={'feed': feed_id})

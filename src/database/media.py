@@ -6,6 +6,14 @@ import src.orm.sqlalchemy.fetch
 import src.orm.sqlmodel.fetch
 
 
+def get_media_standard_columns() -> typing.List[str]:
+    """
+
+    :return:
+    """
+    return ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
+
+
 def create_fetch_media_statement(orm_model: str,
                                  feed_id: int,
                                  columns: typing.Optional[typing.List[str]] = None) \
@@ -18,8 +26,7 @@ def create_fetch_media_statement(orm_model: str,
     :param columns:
     :return:
     """
-    columns_ = columns if columns else \
-        ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
+    columns_ = columns if columns else get_media_standard_columns()
     if orm_model == 'sqlalchemy':
         statement = src.orm.sqlalchemy.fetch.create_fetch_media_statement(columns=columns_,
                                                                           feed_id=feed_id)

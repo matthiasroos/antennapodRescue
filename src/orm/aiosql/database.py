@@ -5,7 +5,7 @@ import typing
 import aiosql
 import pandas as pd
 
-queries = aiosql.from_path('aiosql_/antennapod.sql', 'sqlite3')
+queries = aiosql.from_path('src/orm/aiosql/antennapod.sql', 'sqlite3')
 
 
 def get_connection(file_name: str) -> sqlite3.Connection:
@@ -88,6 +88,28 @@ def fetch_media_for_feed(connection: sqlite3.Connection,
     media_df = fetch_media_for_items(connection=connection,
                                      feeditems=feeditems)
     return media_df
+
+
+def fetch_kind(kind: str,
+               connection: sqlite3.Connection,
+               where_cond: typing.Dict[str, typing.Any] = None,
+               ) -> pd.DataFrame:
+    """
+
+    :param kind:
+    :param connection:
+    :param where_cond:
+    :return:
+    """
+    if kind == 'feeds':
+        elements_df = fetch_feeds(connection=connection)
+    elif kind == 'feeditems':
+        elements_df = fetch_items_for_feed(connection=connection, feed_number=where_cond['feed'])
+    elif kind == 'media':
+        elements_df = fetch_media_for_items(connection=connection, **kwargs)
+    else:
+        elements_df = pd.DataFrame()
+    return elements_df
 
 
 def write_feeditems_and_media_to_db(connection: sqlite3.Connection,

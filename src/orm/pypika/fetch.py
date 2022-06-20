@@ -41,3 +41,23 @@ def create_fetch_feeditems_statement(columns: typing.List[str],
         .select(*specific_cols) \
         .where(feeditems.feed == feed_id)
     return query
+
+
+def create_fetch_media_statement(columns: typing.List[str],
+                                 feed_id: int):
+    """
+
+    :param columns:
+    :param feed_id:
+    :return:
+    """
+    feeditems = pypika.Table('FeedItems')
+    media = pypika.Table('FeedMedia')
+    specific_cols = [getattr(media, col) for col in columns]
+    query = pypika.Query.from_(media) \
+        .select(*specific_cols) \
+        .join(feeditems) \
+        .on(media.feeditem == feeditems.id) \
+        .where(feeditems.feed == feed_id)
+
+    return query

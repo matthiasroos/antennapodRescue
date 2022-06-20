@@ -1,8 +1,15 @@
+import importlib
 import typing
 
 import pandas as pd
 
+import src.orm.aiosql.database
+import src.orm.peewee.fetch
+import src.orm.pypika.fetch
 import src.orm.sqlalchemy.database
+import src.orm.sqlalchemy.fetch
+import src.orm.sqlmodel.database
+import src.orm.sqlmodel.fetch
 import src.database.connection
 import src.database.fetch
 import src.database.feeditems
@@ -11,13 +18,43 @@ import src.database.media
 import src.database.update
 
 
+def create_fetch_statement_for_kind(orm_model: str,
+                                    kind: str,
+                                    columns: typing.List[str],
+                                    where_cond: typing.Dict[str, typing.Any] = None) \
+     -> typing.Tuple[typing.Any,
+                     typing.List[str]]:
+    """
+
+    :param orm_model:
+    :param kind:
+    :param columns:
+    :param where_cond:
+    :return:
+    """
+    orm_module = importlib.import_module(f'src.orm.{orm_model}.fetch')
+    if kind == 'feeds':
+        columns_ = columns if columns else src.database.feeds.get_feed_standard_columns()
+        statement = getattr(orm_module, 'create_fetch_feeds_statement')(columns=columns_, where_cond=where_cond)
+    elif kind == 'feeditems':
+        columns_ = columns if columns else src.database.feeditems.get_feeditems_standard_columns()
+        statement = getattr(orm_module, 'create_fetch_feeditems_statement')(columns=columns_, feed_id=where_cond['feed'])
+    elif kind == 'media':
+        columns_ = columns if columns else src.database.media.get_media_standard_columns()
+        statement = getattr(orm_module, 'create_fetch_media_statement')(columns=columns_, feed_id=where_cond['feed_id'])
+    else:
+        statement, columns_ = None, []
+
+    return statement, columns_
+
+
 def fetch_from_db(kind: str,
                   sqlite_filename: str,
                   orm_model: str = 'sqlalchemy',
                   columns: typing.Optional[typing.List[str]] = None,
                   sort_by: typing.Iterable[str] = None,
                   where_cond: typing.Dict[str, typing.Any] = None,
-                  ) -> pd.DataFrame:
+                  ) -> typing.Optional[pd.DataFrame]:
     """
 
     :param kind: kind of elements to fetch from db, possible values: 'feeds', 'feeditems', 'media'
@@ -33,24 +70,26 @@ def fetch_from_db(kind: str,
     connection = src.database.connection.get_connection(orm_model=orm_model,
                                                         sqlite_filename=sqlite_filename)
 
-    if kind == 'feeds':
-        statement, columns_ = src.database.feeds.create_fetch_feeds_statement(orm_model=orm_model,
-                                                                              columns=columns,
-                                                                              where_cond=where_cond)
-    elif kind == 'feeditems':
-        statement, columns_ = src.database.feeditems.create_fetch_feeditems_statement(orm_model=orm_model,
-                                                                                      feed_id=where_cond['feed_id'],
-                                                                                      columns=columns)
-    elif kind == 'media':
-        statement, columns_ = src.database.media.create_fetch_media_statement(orm_model=orm_model,
-                                                                              feed_id=where_cond['feed_id'],
-                                                                              columns=columns)
-    else:
-        statement, columns_ = ...
+    elements_df = None
 
-    elements_df = src.database.fetch.fetch_all_df(connection=connection,
-                                                  statement=statement,
-                                                  columns=columns_)
+    if orm_model in ['sqlalchemy', 'sqlmodel', 'pypika', 'peewee']:
+        statement, columns_ = create_fetch_statement_for_kind(orm_model=orm_model,
+                                                              kind=kind,
+                                                              columns=columns,
+                                                              where_cond=where_cond)
+
+    elif orm_model == 'aiosql':
+        statement, columns_ = None, []
+        elements_df = src.orm.aiosql.database.fetch_kind(kind=kind,
+                                                         connection=connection,
+                                                         where_cond=where_cond)
+    else:
+        statement, columns_ = None, []
+
+    if elements_df is None and statement is not None and columns_:
+        elements_df = src.database.fetch.fetch_all_df(connection=connection,
+                                                      statement=statement,
+                                                      columns=columns_)
 
     elements_df = elements_df.sort_values(by=sort_by)
     return elements_df
@@ -79,8 +118,10 @@ def update_db(kind: str,
                                                                                data=data,
                                                                                columns=columns)
     else:
-        statements = ...
+        statements = None
 
-    src.database.update.update_db(orm_model=orm_model,
-                                  sqlite_filename=sqlite_filename,
-                                  statements=statements)
+    if statements:
+
+        src.database.update.update_db(orm_model=orm_model,
+                                      sqlite_filename=sqlite_filename,
+                                      statements=statements)

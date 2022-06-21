@@ -1,3 +1,4 @@
+import asyncio
 import importlib
 import typing
 
@@ -32,13 +33,15 @@ def create_fetch_statement_for_kind(orm_model: str,
     :param where_cond:
     :return:
     """
+    if orm_model not in ['sqlalchemy', 'sqlmodel', 'pypika', 'peewee']:
+        return None, []
     orm_module = importlib.import_module(f'src.orm.{orm_model}.fetch')
     if kind == 'feeds':
         columns_ = columns if columns else src.database.feeds.get_feed_standard_columns()
         statement = getattr(orm_module, 'create_fetch_feeds_statement')(columns=columns_, where_cond=where_cond)
     elif kind == 'feeditems':
         columns_ = columns if columns else src.database.feeditems.get_feeditems_standard_columns()
-        statement = getattr(orm_module, 'create_fetch_feeditems_statement')(columns=columns_, feed_id=where_cond['feed'])
+        statement = getattr(orm_module, 'create_fetch_feeditems_statement')(columns=columns_, where_cond=where_cond)
     elif kind == 'media':
         columns_ = columns if columns else src.database.media.get_media_standard_columns()
         statement = getattr(orm_module, 'create_fetch_media_statement')(columns=columns_, feed_id=where_cond['feed_id'])

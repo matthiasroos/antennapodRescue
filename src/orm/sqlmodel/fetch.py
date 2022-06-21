@@ -23,16 +23,17 @@ def create_fetch_feeds_statement(columns: typing.List[str],
 
 
 def create_fetch_feeditems_statement(columns: typing.List[str],
-                                     feed_id: int) -> typing.Union[sqlmodel.sql.expression.Select,
-                                                                   sqlmodel.sql.expression.SelectOfScalar]:
+                                     where_cond: typing.Dict[str, typing.Any] = None) \
+        -> typing.Union[sqlmodel.sql.expression.Select,
+                        sqlmodel.sql.expression.SelectOfScalar]:
     """
     Create statement to fetch all feeditems for a feed.
 
     :param columns:
-    :param feed_id: id of the feed
+    :param where_cond
     :return:
     """
-    statement = src.orm.sqlmodel.models.FeedItem.fetch_feeditems_for_feed(feed_id=feed_id,
+    statement = src.orm.sqlmodel.models.FeedItem.fetch_feeditems_for_feed(feed_id=where_cond['feed'],
                                                                           columns=columns)
     return statement
 

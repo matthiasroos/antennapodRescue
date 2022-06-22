@@ -9,6 +9,22 @@ import src.orm.sqlalchemy.database
 import src.rssfeed.feed
 
 
+def download_and_parse_feed(url: typing.Optional[str] = None,
+                            feeds_df: typing.Optional[pd.DataFrame] = None) -> pd.DataFrame:
+    """
+
+    :param url:
+    :param feeds_df:
+    :return:
+    """
+    if url is None:
+        url = feeds_df.download_url.tolist()[0]
+    xml = src.rssfeed.feed.download_xml(url=url)
+    if xml:
+        return src.rssfeed.feed.parse_xml_for_episodes_df(xml=xml)
+    return pd.DataFrame()
+
+
 def get_episodes_df_feed(sqlite_filename: str,
                          feed_id: int) -> pd.DataFrame:
     """
@@ -21,10 +37,7 @@ def get_episodes_df_feed(sqlite_filename: str,
                                            sqlite_filename=sqlite_filename,
                                            orm_model='sqlalchemy',
                                            where_cond={'id': feed_id})
-    xml = src.rssfeed.feed.download_xml(url=feed.download_url.tolist()[0])
-    if xml:
-        return src.rssfeed.feed.parse_xml_for_episodes_df(xml=xml)
-    return pd.DataFrame()
+    return download_and_parse_feed(url=feed.download_url.tolist()[0])
 
 
 async def get_data_for_feed(sqlite_filename: str,

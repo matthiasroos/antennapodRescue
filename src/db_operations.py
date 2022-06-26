@@ -6,6 +6,7 @@ import pandas as pd
 
 import src.orm.aiosql.database
 import src.orm.peewee.fetch
+import src.orm.pony.database
 import src.orm.pypika.fetch
 import src.orm.sqlalchemy.database
 import src.orm.sqlalchemy.fetch
@@ -86,6 +87,11 @@ def fetch_from_db(kind: str,
         elements_df = src.orm.aiosql.database.fetch_kind(kind=kind,
                                                          connection=connection,
                                                          where_cond=where_cond)
+    elif orm_model == 'pony':
+        statement, columns_ = None, []
+        elements_df = src.orm.pony.database.fetch_kind(kind=kind,
+                                                       connection=connection,
+                                                       where_cond=where_cond)
     else:
         statement, columns_ = None, []
 

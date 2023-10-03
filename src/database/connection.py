@@ -15,7 +15,7 @@ def get_connection(orm_model: str,
     """
 
     if orm_model == 'sqlalchemy':
-        connection = src.orm.sqlalchemy.database.get_connection(sqlite_filename=sqlite_filename)
+        connection = src.orm.sqlalchemy.database.get_async_connection(sqlite_filename=sqlite_filename)
     elif orm_model == 'sqlmodel':
         connection = src.orm.sqlmodel.database.get_connection(sqlite_filename=sqlite_filename)
     elif orm_model == 'peewee':

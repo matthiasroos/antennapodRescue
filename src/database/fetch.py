@@ -4,8 +4,10 @@ import typing
 import pandas as pd
 import peewee
 import pypika
-import sqlalchemy.engine
+import sqlalchemy.ext.asyncio
 import sqlmodel.sql.expression
+
+import model
 
 
 def fetch_all_df(connection: typing.Union[
@@ -42,3 +44,25 @@ def fetch_all_df(connection: typing.Union[
         columns=columns)
     connection.close()
     return data_df
+
+
+async def fetch_all_data(connection: sqlalchemy.ext.asyncio.AsyncConnection,
+                         statement: sqlalchemy.sql.selectable.Select,
+                         kind: str):
+    """
+    Base method.
+    Fetch all rows of a table from db and return them as a dataframe.
+
+    :param connection: file name of the sqlite database file
+    :param statement: SQL query to be executed
+    :param kind
+    :return:
+    """
+    async with connection as conn:
+        result = await conn.execute(statement=statement)
+        data = result.fetchall()
+        columns = result.keys()
+
+    model_class = model.kind_mapping[kind]
+
+    return [model_class(**{col: d for d, col in zip(dt, columns)}) for dt in data]

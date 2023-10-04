@@ -1,5 +1,7 @@
+import dataclasses
 import typing
 
+import model
 import src.orm.peewee.fetch
 import src.orm.pypika.fetch
 import src.orm.sqlalchemy.fetch
@@ -11,7 +13,7 @@ def get_media_standard_columns() -> typing.List[str]:
 
     :return:
     """
-    return ['id', 'duration', 'download_url', 'downloaded', 'filesize', 'feeditem']
+    return [field.name for field in dataclasses.fields(model.FeedMedia)]
 
 
 def create_fetch_media_statement(orm_model: str,

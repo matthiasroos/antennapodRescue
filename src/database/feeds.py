@@ -1,6 +1,7 @@
-
+import dataclasses
 import typing
 
+import model
 import src.orm.peewee.fetch
 import src.orm.pypika.fetch
 import src.orm.sqlalchemy.fetch
@@ -12,7 +13,7 @@ def get_feed_standard_columns() -> typing.List[str]:
 
     :return:
     """
-    return ['id', 'title', 'file_url', 'download_url', 'downloaded']
+    return [field.name for field in dataclasses.fields(model.Feed)]
 
 
 def create_fetch_feeds_statement(orm_model: str,

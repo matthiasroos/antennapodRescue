@@ -39,7 +39,7 @@ class FeedMedia(AntennaPodElement):
     id: int
     duration: datetime.timedelta
     download_url: URL
-    downloaded: int
+    downloaded: bool
     filesize: int
     playback_completion_date: datetime.datetime
     feeditem: int

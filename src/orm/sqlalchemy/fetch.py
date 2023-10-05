@@ -71,19 +71,31 @@ def create_fetch_feeditems_statement(columns: typing.List[str],
 
 
 def create_fetch_media_statement(columns: typing.List[str],
-                                 feed_id: int) -> sqlalchemy.sql.selectable.Select:
+                                 where_cond: typing.Dict[str, typing.Any] = None)\
+        -> sqlalchemy.sql.selectable.Select:
     """
     Create statement to fetch all media for a feed.
 
     :param columns:
-    :param feed_id: id of the feed
-    :return: dataframe containing all media
+    :param where_cond:
+    :return:
     """
-    specific_cols = [sqlalchemy.sql.column(col) if col != 'id' else src.orm.sqlalchemy.models.FeedMedia.id
-                     for col in columns]
-    statement = sqlalchemy.sql.select(
-        from_obj=src.orm.sqlalchemy.models.FeedMedia,
-        columns=specific_cols,
-    ).filter(src.orm.sqlalchemy.models.FeedMedia.feeditem == src.orm.sqlalchemy.models.FeedItem.id)\
-        .where(src.orm.sqlalchemy.models.FeedItem.feed == feed_id)
+
+    if where_cond:
+        where_cond_ = {}
+        for column, values in where_cond.items():
+            if column == 'feed':
+                if isinstance(values, str) or isinstance(values, int):
+                    sbq = sqlalchemy.sql.select(src.orm.sqlalchemy.models.FeedItem.feed == values)
+                elif isinstance(values, list):
+                    sbq = sqlalchemy.sql.select(src.orm.sqlalchemy.models.FeedItem.feed.in_(values))
+                where_cond_['feeditem'] = sbq
+            else:
+                where_cond_[column] = values
+    else:
+        where_cond_ = where_cond
+
+    statement = create_fetch_statement(columns=columns,
+                                       model_class=src.orm.sqlalchemy.models.FeedMedia,
+                                       where_cond=where_cond_)
     return statement

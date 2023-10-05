@@ -75,7 +75,7 @@ class FeedItem(Base, WhereMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     title = sqlalchemy.Column(sqlalchemy.String)
     pubDate = sqlalchemy.Column(EpochTimestamp)
-    read = sqlalchemy.Column(sqlalchemy.Integer)
+    read = sqlalchemy.Column(sqlalchemy.Boolean)
     link = sqlalchemy.Column(sqlalchemy.String)
     description = sqlalchemy.Column(sqlalchemy.String)
 
@@ -85,18 +85,18 @@ class FeedItem(Base, WhereMixin):
     image_url = sqlalchemy.Column(sqlalchemy.String)
 
 
-class FeedMedia(Base):
+class FeedMedia(Base, WhereMixin):
     """
     Table FeedMedia
     """
     __tablename__ = "FeedMedia"
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    duration: datetime.timedelta = sqlalchemy.Column(Milliseconds)
+    duration = sqlalchemy.Column(Milliseconds)
     download_url = sqlalchemy.Column(sqlalchemy.String)
-    downloaded = sqlalchemy.Column(sqlalchemy.Integer)
+    downloaded = sqlalchemy.Column(sqlalchemy.Boolean)
     filesize = sqlalchemy.Column(sqlalchemy.Integer)
-    playback_completion_date: int = sqlalchemy.Column(sqlalchemy.Integer)
+    playback_completion_date = sqlalchemy.Column(EpochTimestamp)
 
     feeditem = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('FeedItems.id'))
 

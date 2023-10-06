@@ -30,12 +30,11 @@ def create_fetch_statement(columns: typing.List[str],
         for column, values in where_cond.items():
             if isinstance(values, str) or isinstance(values, int):
                 expressions.append(getattr(model_class, column) == values)
-            elif isinstance(values, list):
+            elif isinstance(values, list) or isinstance(values, sqlalchemy.sql.expression.Select):
                 expressions.append(getattr(model_class, column).in_(values))
     else:
         expressions = []
     statement = statement.where(sqlalchemy.and_(True, *expressions))
-    print(statement)
     return statement
 
 
@@ -85,10 +84,8 @@ def create_fetch_media_statement(columns: typing.List[str],
         where_cond_ = {}
         for column, values in where_cond.items():
             if column == 'feed':
-                if isinstance(values, str) or isinstance(values, int):
-                    sbq = sqlalchemy.sql.select(src.orm.sqlalchemy.models.FeedItem.feed == values)
-                elif isinstance(values, list):
-                    sbq = sqlalchemy.sql.select(src.orm.sqlalchemy.models.FeedItem.feed.in_(values))
+                sbq = create_fetch_feeditems_statement(columns=['id'],
+                                                       where_cond={'feed': values})
                 where_cond_['feeditem'] = sbq
             else:
                 where_cond_[column] = values

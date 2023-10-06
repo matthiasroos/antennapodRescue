@@ -100,8 +100,30 @@ def fetch_from_db(kind: str,
                                                       statement=statement,
                                                       columns=columns_)
 
+
     elements_df = elements_df.sort_values(by=sort_by)
     return elements_df
+
+def create_update_statements_for_kind(orm_model: str,
+                                     kind: str,
+                                     data: list[model.AntennaPodElement],
+                                     columns: list[str]) -> typing.Optional[list[sqlalchemy.sql.Update]]:
+    """
+
+    :param orm_model:
+    :param kind:
+    :param data:
+    :param columns:
+    :return:
+    """
+    if orm_model not in ['sql_alchemy']:
+        return None
+    orm_module = importlib.import_module(f'src.orm.{orm_model}.update')
+    if kind == 'feeditems':
+        statements = getattr(orm_module, 'create_update_feeditems_statements')(data=data,
+                                                                               columns=columns)
+
+    return statements
 
 
 def update_db(kind: str,
@@ -123,9 +145,9 @@ def update_db(kind: str,
     """
 
     if kind == 'feeditems':
-        statements = src.database.feeditems.create_update_feeditems_statements(orm_model=orm_model,
-                                                                               data=data,
-                                                                               columns=columns)
+        statements = create_update_statements_for_kind(orm_model=orm_model,
+                                                       data=data,
+                                                       columns=columns)
     else:
         statements = None
 

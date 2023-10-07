@@ -1,9 +1,11 @@
 import asyncio
+import dataclasses
 import importlib
 import typing
 
 import pandas as pd
 
+import model
 import src.orm.aiosql.database
 import src.orm.peewee.fetch
 import src.orm.pony.database
@@ -14,9 +16,6 @@ import src.orm.sqlmodel.database
 import src.orm.sqlmodel.fetch
 import src.database.connection
 import src.database.fetch
-import src.database.feeditems
-import src.database.feeds
-import src.database.media
 import src.database.update
 
 
@@ -38,14 +37,14 @@ def create_fetch_statement_for_kind(orm_model: str,
         return None, []
     orm_module = importlib.import_module(f'src.orm.{orm_model}.fetch')
     if kind == 'feeds':
-        columns_ = columns if columns else src.database.feeds.get_feed_standard_columns()
+        columns_ = columns if columns else [field.name for field in dataclasses.fields(model.Feed)]
         statement = getattr(orm_module, 'create_fetch_feeds_statement')(columns=columns_, where_cond=where_cond)
     elif kind == 'feeditems':
-        columns_ = columns if columns else src.database.feeditems.get_feeditems_standard_columns()
+        columns_ = columns if columns else [field.name for field in dataclasses.fields(model.FeedItem)]
         statement = getattr(orm_module, 'create_fetch_feeditems_statement')(columns=columns_, where_cond=where_cond)
     elif kind == 'media':
-        columns_ = columns if columns else src.database.media.get_media_standard_columns()
-        statement = getattr(orm_module, 'create_fetch_media_statement')(columns=columns_, feed_id=where_cond['feed_id'])
+        columns_ = columns if columns else [field.name for field in dataclasses.fields(model.FeedMedia)]
+        statement = getattr(orm_module, 'create_fetch_media_statement')(columns=columns_, where_cond=where_cond)
     else:
         statement, columns_ = None, []
 

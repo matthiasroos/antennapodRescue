@@ -9,21 +9,19 @@ Title = NewType('Title', str)
 
 @dataclasses.dataclass
 class AntennaPodElement:
-    pass
+    id: int
 
 
 @dataclasses.dataclass
 class Feed(AntennaPodElement):
-    id: int
     title: Title
     file_url: str
-    dowload_url: URL
+    download_url: URL
     downloaded: int
 
 
 @dataclasses.dataclass
 class FeedItem(AntennaPodElement):
-    id: int
     title: Title
     pubDate: datetime.datetime
     read: int
@@ -36,7 +34,6 @@ class FeedItem(AntennaPodElement):
 
 @dataclasses.dataclass
 class FeedMedia(AntennaPodElement):
-    id: int
     duration: datetime.timedelta
     download_url: URL
     downloaded: bool

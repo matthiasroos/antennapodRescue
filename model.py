@@ -1,6 +1,9 @@
 import dataclasses
 import datetime
+import typing
 from typing import NewType
+
+import sqlalchemy.engine
 
 
 URL = NewType('URL', str)
@@ -47,3 +50,19 @@ class FeedMedia(AntennaPodElement):
 kind_mapping = {'feeds': Feed,
                 'feeditems': FeedItem,
                 'media': FeedMedia}
+
+
+def create(kind: str,
+           data: typing.Union[list[sqlalchemy.engine.Row],
+                              list[tuple[typing.Any]]],
+           columns: list[str]) -> list[typing.Union[Feed, FeedItem, FeedMedia]]:
+    """
+    Create a list of AntennaPodElements.
+
+    :param kind:
+    :param data:
+    :param columns:
+    :return:
+    """
+    model_class = kind_mapping[kind]
+    return [model_class(**{col: d for d, col in zip(dt, columns)}) for dt in data]

@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import requests
 
+import model
 import src.utils
 
 
@@ -41,3 +42,27 @@ def parse_xml_for_episodes_df(xml: bytes) -> pd.DataFrame:
         episode_list.append(item)
     return pd.DataFrame(episode_list,
                         columns=['title', 'pubDate', 'read', 'description', 'item_identifier'])
+
+
+def parse_xml_for_episodes_list(xml: bytes) -> list[model.FeedItem]:
+    """
+
+    :param xml:
+    :return:
+    """
+    root = ET.fromstring(xml)
+    episodes = []
+    for ep in root.iter(tag='item'):
+
+        item = model.FeedItem(id=None,
+                              title=ep.find('title').text,
+                              pubDate=src.utils.parse_pubdate(element=ep),
+                              read=None,
+                              link=None,
+                              description=ep.find('description').text,
+                              feed=None,
+                              item_identifier=ep.find('guid').text,
+                              image_url=None)
+        episodes.append(item)
+
+    return episodes

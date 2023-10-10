@@ -1,0 +1,19 @@
+name: antennapodRescue
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas
+  - requests
+  - pip
+  - pip:
+      - aiosql
+      - peewee
+      - pony
+      - pypika
+      - pypika-tortoise
+      - sqlalchemy
+      - sqlmodel
+      - tortoise-orm
+      - typing-extensions
+prefix: /opt/miniconda3/envs/antennapodRescue

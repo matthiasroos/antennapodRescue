@@ -5,6 +5,8 @@ import typing
 import aiosql
 import pandas as pd
 
+import model
+
 queries = aiosql.from_path('src/orm/aiosql/antennapod.sql', 'sqlite3')
 
 
@@ -19,7 +21,7 @@ def get_connection(file_name: str) -> sqlite3.Connection:
     return connection
 
 
-def fetch_feeds(connection: sqlite3.Connection) -> pd.DataFrame:
+def fetch_feeds(connection: sqlite3.Connection) -> tuple[list[tuple[typing.Any]], list[str]]:
     """
     Fetch all feeds from the database.
 
@@ -30,9 +32,7 @@ def fetch_feeds(connection: sqlite3.Connection) -> pd.DataFrame:
         columns = [column_info[0] for column_info in cursor.description]
         feeds = cursor.fetchall()
 
-    feeds_df = pd.DataFrame(feeds)
-    feeds_df.columns = columns
-    return feeds_df
+    return feeds, columns
 
 
 def fetch_items_for_feed(connection: sqlite3.Connection,

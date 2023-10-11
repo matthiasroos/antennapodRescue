@@ -2,11 +2,17 @@
 
 
 --name: fetch_all_feeds
-select * from Feeds;
+select id, title, file_url. download_url, downloaded
+  from Feeds;
+
+--name: fetch_feed
+select id, title, file_url, download_url, downloaded
+  from Feeds
+ where id = :feed;
 
 
 --name: fetch_items_from_feed
-select *
+select id, title, pubDate, "read", link, description, feed, item_identifier, image_url
   from FeedItems
  where feed = :feed;
 
@@ -24,7 +30,7 @@ delete from FeedItems
 
 
 --name: fetch_media
-select *
+select duration, download_url, downloaded, filesize, playback_completion_date, feeditem, played_duration, last_played_time
   from FeedMedia
  where feeditem = :feeditem;
 

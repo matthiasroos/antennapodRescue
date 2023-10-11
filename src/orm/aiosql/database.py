@@ -35,6 +35,21 @@ def fetch_feeds(connection: sqlite3.Connection) -> tuple[list[tuple[typing.Any]]
     return feeds, columns
 
 
+def fetch_feed(connection: sqlite3.Connection,
+               feed_number: int) -> tuple[list[tuple[typing.Any]], list[str]]:
+    """
+
+    :param connection:
+    :param feed_number:
+    :return:
+    """
+    with queries.fetch_feed_cursor(connection, feed=feed_number) as cursor:
+        columns = [column_info[0] for column_info in cursor.description]
+        feed = cursor.fetchall()
+
+    return feed, columns
+
+
 def fetch_items_for_feed(connection: sqlite3.Connection,
                          feed_number: int) -> pd.DataFrame:
     """

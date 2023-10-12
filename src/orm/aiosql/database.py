@@ -107,7 +107,7 @@ def fetch_media_for_feed(connection: sqlite3.Connection,
 def fetch_kind(kind: str,
                connection: sqlite3.Connection,
                where_cond: typing.Dict[str, typing.Any] = None,
-               ) -> pd.DataFrame:
+               ) -> typing.Tuple[typing.Optional[list[typing.Any]], typing.Optional[list[str]]]:
     """
 
     :param kind:
@@ -116,14 +116,19 @@ def fetch_kind(kind: str,
     :return:
     """
     if kind == 'feeds':
-        elements_df = fetch_feeds(connection=connection)
+        if not where_cond:
+            data, columns = fetch_feeds(connection=connection)
+        else:
+            data, columns = fetch_feed(connection=connection, feed_number=where_cond['feed'])
     elif kind == 'feeditems':
-        elements_df = fetch_items_for_feed(connection=connection, feed_number=where_cond['feed'])
+        data, columns = fetch_items_for_feed(connection=connection, feed_number=where_cond['feed'])
     elif kind == 'media':
-        elements_df = fetch_media_for_items(connection=connection, **kwargs)
+        data, columns = fetch_media_for_items(connection=connection, feeditems=where_cond['feed_items'])
     else:
-        elements_df = pd.DataFrame()
-    return elements_df
+        data = None
+        columns = None
+
+    return data, columns
 
 
 def write_feeditems_and_media_to_db(connection: sqlite3.Connection,

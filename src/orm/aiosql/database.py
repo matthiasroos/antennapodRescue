@@ -51,7 +51,7 @@ def fetch_feed(connection: sqlite3.Connection,
 
 
 def fetch_items_for_feed(connection: sqlite3.Connection,
-                         feed_number: int) -> pd.DataFrame:
+                         feed_number: int) -> tuple[list[tuple[typing.Any]], list[str]]:
     """
     Fetch all items for one feed from the database.
 
@@ -63,13 +63,11 @@ def fetch_items_for_feed(connection: sqlite3.Connection,
         columns = [column_info[0] for column_info in cursor.description]
         feed_items = cursor.fetchall()
 
-    feed_items_df = pd.DataFrame(feed_items)
-    feed_items_df.columns = columns
-    return feed_items_df
+    return feed_items, columns
 
 
 def fetch_media_for_items(connection: sqlite3.Connection,
-                          feeditems: typing.List[str]) -> pd.DataFrame:
+                          feeditems: typing.List[int]) -> tuple[list[tuple[typing.Any]], list[str]]:
     """
     Fetch all media for a list of feeditems.
 
@@ -82,15 +80,13 @@ def fetch_media_for_items(connection: sqlite3.Connection,
         with queries.fetch_media_cursor(connection, feeditem=feeditem) as cursor:
             columns = [column_info[0] for column_info in cursor.description]
             media = cursor.fetchall()
-            media_list.append(pd.DataFrame(media))
+            media_list.append(media)
 
-    media_df = pd.concat(media_list)
-    media_df.columns = columns
-    return media_df
+    return media_list, columns
 
 
 def fetch_media_for_feed(connection: sqlite3.Connection,
-                         feed_number: int) -> pd.DataFrame:
+                         feed_number: int) -> tuple[list[tuple[typing.Any]], list[str]]:
     """
     Fetch all media for a specific feed.
 
@@ -98,11 +94,14 @@ def fetch_media_for_feed(connection: sqlite3.Connection,
     :param feed_number: internal number of the feed
     :return: dataframe containing all media for the specified feed
     """
-    feed_items_df = fetch_items_for_feed(connection=connection, feed_number=feed_number)
-    feeditems = feed_items_df['id'].tolist()
-    media_df = fetch_media_for_items(connection=connection,
-                                     feeditems=feeditems)
-    return media_df
+    data, columns_ = fetch_items_for_feed(connection=connection, feed_number=feed_number)
+    feeditems = model.create(kind='feeditems',
+                             data=data,
+                             columns=columns_)
+    feeditems_ids = [fd.id for fd in feeditems]
+    media, columns = fetch_media_for_items(connection=connection,
+                                           feeditems=feeditems_ids)
+    return media, columns
 
 
 def fetch_kind(kind: str,

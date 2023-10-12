@@ -23,17 +23,25 @@ def get_connection(sqlite_filename: str) -> sqlalchemy.engine.Connection:
 
 
 def execute_statements(sqlite_filename: str,
+                       connection: sqlalchemy.engine.Engine,
                        statements: typing.List):
     """
 
     :param sqlite_filename:
+    :param connection:
     :param statements:
     :return:
     """
-    connection = get_connection(sqlite_filename=sqlite_filename)
+    if sqlite_filename is None and connection is None:
+        return None, None
+    if sqlite_filename:
+        connection = get_connection(sqlite_filename=sqlite_filename)
     with sqlmodel.Session(connection) as session:
         results = []
+        columns = []
         for statement in statements:
             result = session.exec(statement)
             results.append(result)
-    return results
+            columns.append(result.keys())
+        session.commit()
+    return results, columns

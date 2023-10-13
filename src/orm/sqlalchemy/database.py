@@ -25,7 +25,9 @@ def get_connection(sqlite_filename: str) -> sqlalchemy.engine.Connection:
 
 def execute_statements(sqlite_filename: str,
                        connection: sqlalchemy.engine.Engine,
-                       statements: typing.List):
+                       statements: typing.List)\
+        -> typing.Tuple[typing.Optional[list[list[sqlalchemy.engine.Row]]],
+                        typing.Optional[list[list[str]]]]:
     """
 
     :param sqlite_filename:
@@ -42,7 +44,7 @@ def execute_statements(sqlite_filename: str,
         columns = []
         for statement in statements:
             result = session.execute(statement)
-            results.append(result)
+            results.append(result.fetchall())
             columns.append(result.keys())
         session.commit()
     return results, columns

@@ -5,7 +5,7 @@ import typing
 
 import pandas as pd
 
-import model
+import src.database.model
 import src.orm.aiosql.database
 import src.orm.peewee.fetch
 import src.orm.pony.database
@@ -37,13 +37,13 @@ def create_fetch_statement_for_kind(orm_model: str,
         return None, []
     orm_module = importlib.import_module(f'src.orm.{orm_model}.fetch')
     if kind == 'feeds':
-        columns_ = columns if columns else [field.name for field in dataclasses.fields(model.Feed)]
+        columns_ = columns if columns else [field.name for field in dataclasses.fields(src.database.model.Feed)]
         statement = getattr(orm_module, 'create_fetch_feeds_statement')(columns=columns_, where_cond=where_cond)
     elif kind == 'feeditems':
-        columns_ = columns if columns else [field.name for field in dataclasses.fields(model.FeedItem)]
+        columns_ = columns if columns else [field.name for field in dataclasses.fields(src.database.model.FeedItem)]
         statement = getattr(orm_module, 'create_fetch_feeditems_statement')(columns=columns_, where_cond=where_cond)
     elif kind == 'media':
-        columns_ = columns if columns else [field.name for field in dataclasses.fields(model.FeedMedia)]
+        columns_ = columns if columns else [field.name for field in dataclasses.fields(src.database.model.FeedMedia)]
         statement = getattr(orm_module, 'create_fetch_media_statement')(columns=columns_, where_cond=where_cond)
     else:
         statement, columns_ = None, []

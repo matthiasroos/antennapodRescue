@@ -5,7 +5,7 @@ import typing
 import pandas as pd
 import pony.orm
 
-import model
+import src.database.model
 import src.orm.pony.models
 
 
@@ -34,7 +34,7 @@ def fetch_feeds() -> pd.DataFrame:
     :return:
     """
     query = pony.orm.select(feed for feed in src.orm.pony.models.Feed)
-    columns = [field.name for field in dataclasses.fields(model.Feed)]
+    columns = [field.name for field in dataclasses.fields(src.database.model.Feed)]
     feeds = [[getattr(f, col) for col in columns] for f in query]
     feeds_df = pd.DataFrame(feeds, columns=columns)
     return feeds_df
@@ -48,7 +48,7 @@ def fetch_feeditems(where_cond) -> pd.DataFrame:
     """
     query = pony.orm.select(feeditem for feeditem in src.orm.pony.models.FeedItem
                             if getattr(feeditem, list(where_cond.keys())[0]) == list(where_cond.values())[0])
-    columns = [field.name for field in dataclasses.fields(model.FeedItem)]
+    columns = [field.name for field in dataclasses.fields(src.database.model.FeedItem)]
     feeditems = [[getattr(f, col) for col in columns] for f in query]
     feeditems_df = pd.DataFrame(feeditems, columns=columns)
 

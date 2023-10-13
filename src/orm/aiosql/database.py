@@ -5,7 +5,7 @@ import typing
 import aiosql
 import pandas as pd
 
-import model
+import src.database.model
 
 queries = aiosql.from_path('src/orm/aiosql/antennapod.sql', 'sqlite3')
 
@@ -95,9 +95,9 @@ def fetch_media_for_feed(connection: sqlite3.Connection,
     :return: dataframe containing all media for the specified feed
     """
     data, columns_ = fetch_items_for_feed(connection=connection, feed_number=feed_number)
-    feeditems = model.create(kind='feeditems',
-                             data=data,
-                             columns=columns_)
+    feeditems = src.database.model.create(kind='feeditems',
+                                          data=data,
+                                          columns=columns_)
     feeditems_ids = [fd.id for fd in feeditems]
     media, columns = fetch_media_for_items(connection=connection,
                                            feeditems=feeditems_ids)
